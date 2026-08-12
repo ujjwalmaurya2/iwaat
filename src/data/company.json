@@ -1,0 +1,71 @@
+{
+  "name": "iWAAt",
+  "tagline": "We Build. We Scale. We Market.",
+  "shortDescription": "iWAAt is a multidisciplinary digital services team that specializes in web development, software development, UI/UX design, branding, digital marketing, SEO, automation, and business growth solutions.",
+  "fullStory": "iWAAt is a collaborative team of developers, designers, marketers, and digital strategists passionate about building impactful digital products. We help startups, NGOs, healthcare organizations, fitness brands, photographers, retailers, and businesses establish a strong online presence through modern technology and creative execution.",
+  "stats": [
+    { "value": 20, "suffix": "+", "label": "Projects Delivered" },
+    { "value": 10, "suffix": "+", "label": "Industries Served" },
+    { "value": 100, "suffix": "%", "label": "Responsive Websites" },
+    { "value": 24, "suffix": "/7", "label": "Client Support" },
+    { "value": 98, "suffix": "%", "label": "Client Retention" },
+    { "value": 15, "suffix": "+", "label": "Global Tech Stack Tools" }
+  ],
+  "values": [
+    {
+      "title": "Innovation",
+      "icon": "Zap",
+      "description": "We push boundaries with modern frameworks like React 19, Framer Motion, and high-performance serverless architectures."
+    },
+    {
+      "title": "Reliability",
+      "icon": "ShieldCheck",
+      "description": "We deliver production-ready, security-hardened code with transparent communication and strict deadline adherence."
+    },
+    {
+      "title": "Creativity",
+      "icon": "Sparkles",
+      "description": "Our UI/UX design philosophy merges luxury aesthetics, fluid micro-interactions, and accessible visual hierarchy."
+    },
+    {
+      "title": "Performance",
+      "icon": "Gauge",
+      "description": "Sub-second load times, optimal Lighthouse scores, and pixel-perfect responsiveness across every device."
+    },
+    {
+      "title": "Scalability",
+      "icon": "TrendingUp",
+      "description": "We architect solutions that grow seamlessly alongside your expanding business traffic and customer demands."
+    },
+    {
+      "title": "Partnership",
+      "icon": "Users",
+      "description": "We treat every project as a strategic long-term collaboration focused on driving real, measurable business ROI."
+    }
+  ],
+  "whyChooseUs": [
+    { "title": "Modern Tech Stack", "icon": "Code2", "description": "Built using React, Vite, Tailwind CSS, and Framer Motion." },
+    { "title": "Fast Delivery", "icon": "Clock", "description": "Rapid agile sprints without compromising code quality." },
+    { "title": "Responsive by Default", "icon": "Smartphone", "description": "Pixel-perfect rendering across all mobile, tablet & 4K screens." },
+    { "title": "SEO Optimized", "icon": "Search", "description": "Engineered for search engine ranking & high organic visibility." },
+    { "title": "Scalable Architecture", "icon": "Layers", "description": "Clean modular codebase designed to scale easily." },
+    { "title": "Creative UI/UX", "icon": "Palette", "description": "World-class visual aesthetics inspired by Linear, Stripe & Framer." },
+    { "title": "Business-Oriented Solutions", "icon": "Target", "description": "Focused on driving real client leads, bookings & sales." },
+    { "title": "Long-Term Support", "icon": "HeartHandshake", "description": "Continuous 24/7 technical monitoring & security updates." },
+    { "title": "Transparent Communication", "icon": "MessageSquare", "description": "Direct developer access & real-time progress tracking." },
+    { "title": "Growth-Focused Strategy", "icon": "TrendingUp", "description": "Combined design, code & marketing for max business impact." }
+  ],
+  "contactInfo": {
+    "email": "hello@iwaat.com",
+    "phone": "+1 (800) 492-2800",
+    "whatsapp": "+18004922800",
+    "location": "Global / Remote Digital Agency (US & India Hubs)",
+    "workingHours": "Mon - Sat: 9:00 AM - 8:00 PM EST (24/7 Emergency Support)",
+    "socials": {
+      "linkedin": "https://linkedin.com/company/iwaat",
+      "github": "https://github.com/iwaat-agency",
+      "twitter": "https://twitter.com/iwaat_digital",
+      "instagram": "https://instagram.com/iwaat.digital"
+    }
+  }
+}

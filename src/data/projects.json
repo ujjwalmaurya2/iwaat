@@ -1,0 +1,170 @@
+[
+  {
+    "id": "chinmaya-mission-healthcare-ngo",
+    "title": "Chinmaya Mission Healthcare & NGO Portal",
+    "category": "Healthcare",
+    "categorySlug": "healthcare",
+    "url": "https://chinmaya-mission.vercel.app/",
+    "tagline": "Global healthcare initiative, medical outreach & spiritual organization portal",
+    "description": "A comprehensive healthcare and social welfare platform designed for global outreach, medical services showcases, patient-focused information architecture, responsive layouts, and trust-driven community engagement.",
+    "longDescription": "The Chinmaya Mission Healthcare & NGO Portal bridges global community outreach with medical service programs. Built with accessibility, spiritual heritage, and medical trust as core pillars, the platform facilitates health camp registrations, rural medical aid, donation portals, and educational programs.",
+    "image": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=1200&auto=format&fit=crop",
+    "featured": true,
+    "stats": [
+      { "label": "Global Reach", "value": "100K+" },
+      { "label": "Load Speed", "value": "0.5s" },
+      { "label": "User Trust Score", "value": "99.8%" }
+    ],
+    "technologies": ["React 19", "Tailwind CSS", "Framer Motion", "Vite", "Lucide Icons"],
+    "highlights": [
+      "Rural health camp registration & schedule manager",
+      "Frictionless donation portal interface",
+      "Multi-category medical service showcase",
+      "Accessible typography and responsive layout architecture"
+    ]
+  },
+  {
+    "id": "narayan-ashram-platform",
+    "title": "Narayan Ashram Spiritual & Cultural Trust",
+    "category": "NGO",
+    "categorySlug": "ngo",
+    "url": "https://narayan-ashram.vercel.app/",
+    "tagline": "Spiritual retreat, cultural heritage & community outreach platform",
+    "description": "A serene, modern cultural trust and ashram platform featuring spiritual discourses, event registrations, retreat bookings, social welfare initiatives, and digital donation portals.",
+    "longDescription": "Engineered for Narayan Ashram to preserve spiritual heritage while providing modern digital access to retreat schedules, daily discourses, ashram stay bookings, and charitable community outreach programs.",
+    "image": "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=1200&auto=format&fit=crop",
+    "featured": true,
+    "stats": [
+      { "label": "Monthly Visitors", "value": "35K+" },
+      { "label": "Event Signups", "value": "12K+" },
+      { "label": "Uptime Rating", "value": "99.9%" }
+    ],
+    "technologies": ["React", "Tailwind CSS", "Framer Motion", "Vite", "Lucide Icons"],
+    "highlights": [
+      "Interactive retreat & event calendar registration",
+      "Audio/Video discourse streaming section",
+      "Charitable donation and anna-kshetra sponsorship portal",
+      "Serene glassmorphism and golden warm aesthetic theme"
+    ]
+  },
+  {
+    "id": "wedding-photography-portfolio",
+    "title": "Wedding & Photography Portfolio",
+    "category": "Photography",
+    "categorySlug": "photography",
+    "url": "https://photograpy-website-one.vercel.app/",
+    "tagline": "Cinematic visual storytelling & client booking experience",
+    "description": "An elegant photography portfolio and ceremony-focused website featuring immersive galleries, cinematic layouts, booking CTAs, responsive storytelling, and premium visual presentation.",
+    "longDescription": "Crafted for visual artists and luxury event photographers, this platform presents high-resolution imagery through smooth parallax galleries and curated album storytelling. It includes an interactive pricing guide, inquiry portal, and client testimonial sliders.",
+    "image": "https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=1200&auto=format&fit=crop",
+    "featured": true,
+    "stats": [
+      { "label": "Inquiry Conversion", "value": "+140%" },
+      { "label": "Gallery Views", "value": "120K+" },
+      { "label": "Mobile Engagement", "value": "4.8/5" }
+    ],
+    "technologies": ["React", "Tailwind CSS", "Swiper.js", "Framer Motion", "Vercel"],
+    "highlights": [
+      "Fluid masonry photo gallery with lightbox view",
+      "Cinematic dark/light aesthetic transition",
+      "Automated booking enquiry form with date picker",
+      "Optimized media loading with lazy blur placeholders"
+    ]
+  },
+  {
+    "id": "luxury-jewelry-store",
+    "title": "Luxury Jewelry Store Experience",
+    "category": "Retail",
+    "categorySlug": "retail",
+    "url": "#",
+    "tagline": "High-end jewelry storefront with immersive product showcase",
+    "description": "A premium jewelry storefront experience with elegant product presentation, luxury branding, responsive design, and modern UI interactions.",
+    "longDescription": "Designed to reflect the opulence and craftsmanship of fine jewelry, this digital storefront combines rich typography, gold-accented glassmorphism, 360 product view framing, and smooth micro-interactions that elevate brand prestige.",
+    "image": "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1200&auto=format&fit=crop",
+    "featured": true,
+    "stats": [
+      { "label": "Brand Value Rating", "value": "9.9/10" },
+      { "label": "Average Order Value", "value": "+35%" },
+      { "label": "Customer Dwell Time", "value": "4m 12s" }
+    ],
+    "technologies": ["React", "Tailwind CSS", "Framer Motion", "Lucide React", "Vite"],
+    "highlights": [
+      "High-definition gemstone & precious metal showcases",
+      "Interactive collection filtering by metal, gem & style",
+      "Bespoke custom order inquiry modal",
+      "Ultra-sleek dark mode elegance design language"
+    ]
+  },
+  {
+    "id": "pathology-laboratory",
+    "title": "Pathology Laboratory Portal",
+    "category": "Healthcare",
+    "categorySlug": "healthcare",
+    "url": "https://patho-logy-labs.vercel.app/",
+    "tagline": "Diagnostic test booking & health package platform",
+    "description": "A professional pathology and diagnostics center website featuring test listings, healthcare services, appointment-focused UI, responsive layouts, and medical credibility design patterns.",
+    "longDescription": "Built to streamline medical diagnostics for patients and clinical partners. The platform facilitates home blood collection scheduling, lab report downloads, package comparisons, and instant WhatsApp support.",
+    "image": "https://images.unsplash.com/photo-1579154204601-01588f351e67?q=80&w=1200&auto=format&fit=crop",
+    "featured": true,
+    "stats": [
+      { "label": "Test Bookings", "value": "15K+" },
+      { "label": "Report Download Time", "value": "<1 sec" },
+      { "label": "SEO Rank (Top 3)", "value": "92%" }
+    ],
+    "technologies": ["React 19", "Tailwind CSS", "Vite", "Lucide Icons", "React Hook Form"],
+    "highlights": [
+      "Comprehensive diagnostic test catalog with search & filter",
+      "One-click home sample collection booking",
+      "Patient report download portal simulation",
+      "Trust badges and accredited laboratory certification displays"
+    ]
+  },
+  {
+    "id": "gym-fitness-platform",
+    "title": "Gym & Fitness Growth Platform",
+    "category": "Fitness",
+    "categorySlug": "fitness",
+    "url": "https://gym-website-two-lac.vercel.app/",
+    "tagline": "High-energy athletic membership & training platform",
+    "description": "A high-energy fitness platform showcasing membership plans, trainers, workout programs, responsive animations, and strong conversion-focused design.",
+    "longDescription": "Designed to motivate fitness enthusiasts and drive gym membership signups. Features vibrant neon energy accents, interactive class schedules, trainer bio cards, transformational video stories, and transparent pricing matrices.",
+    "image": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1200&auto=format&fit=crop",
+    "featured": true,
+    "stats": [
+      { "label": "Membership Conversions", "value": "+210%" },
+      { "label": "Active Trainees", "value": "2.5K+" },
+      { "label": "Mobile Traffic", "value": "78%" }
+    ],
+    "technologies": ["React", "Tailwind CSS", "Framer Motion", "Swiper", "React CountUp"],
+    "highlights": [
+      "Dynamic workout schedule matrix by day and discipline",
+      "Interactive BMI calculator widget",
+      "Trainer profile highlights with specialization badges",
+      "High-energy neon dark mode aesthetic"
+    ]
+  },
+  {
+    "id": "ngo-organization-portal",
+    "title": "NGO Social Impact Portal",
+    "category": "NGO",
+    "categorySlug": "ngo",
+    "url": "https://ngo-project-nu.vercel.app/",
+    "tagline": "Empowering global initiatives, donations & community engagement",
+    "description": "A modern nonprofit and social impact website designed for awareness, donations, volunteer engagement, healthcare initiatives, and educational outreach.",
+    "longDescription": "Created to amplify non-profit missions, drive global campaign transparency, and enable frictionless community support. Highlights active social causes, transparent funding reports, volunteer enrollment forms, and real-time impact counters.",
+    "image": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1200&auto=format&fit=crop",
+    "featured": true,
+    "stats": [
+      { "label": "Donations Raised", "value": "$1.2M+" },
+      { "label": "Volunteers Joined", "value": "5K+" },
+      { "label": "Impact Score", "value": "100%" }
+    ],
+    "technologies": ["React", "Tailwind CSS", "Framer Motion", "Lucide React", "Vite"],
+    "highlights": [
+      "Campaign transparency meters with dynamic progress bars",
+      "Frictionless online donation experience interface",
+      "Volunteer onboarding registration modal",
+      "Storytelling blog and disaster relief emergency response banners"
+    ]
+  }
+]

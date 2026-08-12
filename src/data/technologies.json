@@ -1,0 +1,30 @@
+{
+  "frontend": [
+    { "name": "React 19", "icon": "Atom", "level": "Expert", "description": "Component-based architecture & modern hooks" },
+    { "name": "Next.js", "icon": "Layers", "level": "Advanced", "description": "Server-side rendering & App Router" },
+    { "name": "Tailwind CSS", "icon": "Palette", "level": "Expert", "description": "Utility-first design systems & custom themes" },
+    { "name": "TypeScript", "icon": "FileCode", "level": "Expert", "description": "Type-safe robust application engineering" },
+    { "name": "Framer Motion", "icon": "Sparkles", "level": "Expert", "description": "Fluid spring physics & scroll animations" }
+  ],
+  "backend": [
+    { "name": "Node.js", "icon": "Server", "level": "Expert", "description": "Asynchronous backend runtimes & microservices" },
+    { "name": "Express", "icon": "Zap", "level": "Expert", "description": "RESTful API routes & middleware stacks" },
+    { "name": "MongoDB", "icon": "Database", "level": "Advanced", "description": "Flexible document-based NoSQL storage" },
+    { "name": "PostgreSQL", "icon": "DatabaseZap", "level": "Expert", "description": "Relational data integrity & complex queries" },
+    { "name": "Firebase", "icon": "Flame", "level": "Advanced", "description": "Realtime DB, Auth & Serverless Functions" }
+  ],
+  "tools": [
+    { "name": "Git & GitHub", "icon": "GitBranch", "level": "Expert", "description": "Version control & CI/CD workflow pipelines" },
+    { "name": "Vercel", "icon": "Globe", "level": "Expert", "description": "Global edge deployment & instant previews" },
+    { "name": "Figma", "icon": "Figma", "level": "Expert", "description": "Collaborative UI/UX wireframing & prototyping" },
+    { "name": "Docker", "icon": "Box", "level": "Intermediate", "description": "Containerized software delivery" },
+    { "name": "Postman", "icon": "Send", "level": "Expert", "description": "API testing & documentation automation" }
+  ],
+  "marketing": [
+    { "name": "SEO & Core Web Vitals", "icon": "Search", "level": "Expert", "description": "Organic search ranking & technical audits" },
+    { "name": "Google Analytics 4", "icon": "BarChart3", "level": "Expert", "description": "User behavior tracking & funnel conversion" },
+    { "name": "Meta Ads & Social", "icon": "Share2", "level": "Advanced", "description": "Targeted social media growth campaigns" },
+    { "name": "Google Ads & PPC", "icon": "Target", "level": "Advanced", "description": "High-intent paid search lead generation" },
+    { "name": "Email Automation", "icon": "Mail", "level": "Advanced", "description": "Drip campaigns & customer lifecycle retention" }
+  ]
+}

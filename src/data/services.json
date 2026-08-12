@@ -1,0 +1,116 @@
+[
+  {
+    "id": "web-development",
+    "title": "Web Development",
+    "slug": "web-development",
+    "shortDescription": "High-performance, responsive websites and web portals built with cutting-edge tech stacks.",
+    "description": "We engineer high-speed, modern, SEO-optimized web applications and portals for businesses, NGOs, healthcare institutions, and digital brands. Our focus is on visual excellence, performance, and conversion-driven architecture.",
+    "icon": "Code2",
+    "badge": "Core Expertise",
+    "features": [
+      "Business & Corporate Websites",
+      "NGO & Non-Profit Portals",
+      "Healthcare Platforms & Dashboards",
+      "E-commerce Storefronts & Catalogues",
+      "High-Converting Landing Pages",
+      "Portfolio & Storytelling Sites"
+    ],
+    "deliverables": ["Responsive Web App", "Custom UI Components", "SEO Foundation", "Performance Audit", "CMS / Admin Integration"],
+    "gradient": "from-violet-600 to-indigo-600"
+  },
+  {
+    "id": "software-development",
+    "title": "Software Development",
+    "slug": "software-development",
+    "shortDescription": "Custom software solutions, CRM systems, and scalable enterprise web platforms.",
+    "description": "From custom internal business tools to full-fledged multi-tenant SaaS applications, we architect robust software tailored to complex business workflows and data-driven demands.",
+    "icon": "Cpu",
+    "badge": "Scalable Tech",
+    "features": [
+      "Custom Web Applications",
+      "Admin & Analytics Dashboards",
+      "CRM & Client Management Systems",
+      "ERP Solutions & Workflows",
+      "Internal Business Tools",
+      "Process Automation Platforms"
+    ],
+    "deliverables": ["Scalable API Architecture", "Database Schema Design", "Role-Based Security", "User Permissions", "Cloud Deployment"],
+    "gradient": "from-indigo-600 to-cyan-500"
+  },
+  {
+    "id": "ui-ux-design",
+    "title": "UI/UX Design",
+    "slug": "ui-ux-design",
+    "shortDescription": "User-centric interface design, interactive prototypes, and comprehensive design systems.",
+    "description": "We craft modern, intuitive, and conversion-focused user interfaces that leave lasting impressions. Every pixel, transition, and micro-interaction is intentionally designed for maximum clarity and user delight.",
+    "icon": "Layout",
+    "badge": "Design Excellence",
+    "features": [
+      "Web & Mobile UI Design",
+      "Design Systems & Pattern Libraries",
+      "Interactive Wireframes & Prototypes",
+      "User Research & Journey Mapping",
+      "Brand Experience Design",
+      "Usability Audits & Redesigns"
+    ],
+    "deliverables": ["Figma Design Files", "Design Tokens", "Interactive Prototypes", "Component Specs", "Micro-animations Guide"],
+    "gradient": "from-purple-500 to-pink-500"
+  },
+  {
+    "id": "digital-marketing",
+    "title": "Digital Marketing & SEO",
+    "slug": "digital-marketing",
+    "shortDescription": "Data-driven marketing campaigns, technical SEO, and organic growth strategies.",
+    "description": "Accelerate your market reach and lead generation with search engine optimization, paid advertising, and social media campaigns engineered for measurable ROI.",
+    "icon": "TrendingUp",
+    "badge": "Growth Engine",
+    "features": [
+      "Technical & Local SEO Optimization",
+      "Social Media Marketing & Management",
+      "Performance Marketing & Paid Ads",
+      "Google Ads & PPC Campaigns",
+      "Content Strategy & Copywriting",
+      "Brand Campaigns & Lead Generation"
+    ],
+    "deliverables": ["SEO Audit Report", "Keyword Strategy", "Ad Campaign Setup", "Monthly Analytics Dashboard", "Growth Roadmap"],
+    "gradient": "from-orange-500 to-amber-500"
+  },
+  {
+    "id": "branding",
+    "title": "Branding & Identity",
+    "slug": "branding",
+    "shortDescription": "Distinctive brand identities, logos, visual systems, and marketing collateral.",
+    "description": "We create memorable visual identities that stand out in crowded markets. From initial concept and logo design to complete brand guidelines and digital marketing assets.",
+    "icon": "Sparkles",
+    "badge": "Creative Identity",
+    "features": [
+      "Logo Design & Vector Assets",
+      "Brand Guidelines & Style Guides",
+      "Visual Identity Systems",
+      "Marketing Creatives & Social Kits",
+      "Product Packaging Design",
+      "Business Cards & Collateral"
+    ],
+    "deliverables": ["Logo Vector Files", "Brand Style Guide", "Color Palette & Typography Specs", "Social Media Templates", "Brand Asset Kit"],
+    "gradient": "from-pink-500 to-rose-500"
+  },
+  {
+    "id": "maintenance-support",
+    "title": "Maintenance & Growth",
+    "slug": "maintenance-support",
+    "shortDescription": "24/7 technical support, security hardening, continuous updates, and speed optimization.",
+    "description": "Ensure your digital assets remain secure, blazingly fast, and updated. We provide continuous maintenance, hosting advisory, security patches, and feature iteration.",
+    "icon": "ShieldCheck",
+    "badge": "Reliable Partner",
+    "features": [
+      "Ongoing Website Maintenance",
+      "Speed & Core Web Vitals Optimization",
+      "Security Audits & Patch Updates",
+      "Cloud Hosting Support & Management",
+      "Analytics Tracking & Event Setup",
+      "Continuous UI & Feature Upgrades"
+    ],
+    "deliverables": ["Uptime Monitoring", "Security Scans", "Speed Optimization", "Monthly Maintenance Report", "Priority Dev Support"],
+    "gradient": "from-emerald-500 to-teal-500"
+  }
+]

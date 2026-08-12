@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "quote": "iWAAt delivered our global healthcare and NGO platform with exceptional speed and technical precision. The medical outreach and donation flow transformed our community operations.",
+    "author": "Swami Tejomayananda",
+    "role": "Global Operations Trustee",
+    "organization": "Chinmaya Mission Healthcare",
+    "avatar": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=200&auto=format&fit=crop",
+    "rating": 5,
+    "project": "Chinmaya Healthcare Portal"
+  },
+  {
+    "id": 2,
+    "quote": "The spiritual retreat booking and discourse streaming platform engineered for Narayan Ashram Trust elevated our global visitor engagement and anna-kshetra donations immensely.",
+    "author": "Acharya Devamrita",
+    "role": "Ashram Managing Trustee",
+    "organization": "Narayan Ashram Trust",
+    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop",
+    "rating": 5,
+    "project": "Narayan Ashram Platform"
+  },
+  {
+    "id": 3,
+    "quote": "As an NGO working across remote regions, having a trustworthy, mobile-responsive web portal was non-negotiable. iWAAt exceeded our expectations with intuitive donation tools.",
+    "author": "Elena Rostova",
+    "role": "Executive Director",
+    "organization": "Global Outreach NGO Foundation",
+    "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=200&auto=format&fit=crop",
+    "rating": 5,
+    "project": "NGO Impact Portal"
+  },
+  {
+    "id": 4,
+    "quote": "Our photography website feels like a digital art gallery. Client inquiries spiked by 140% within two months of launch. Their visual design sense is world-class.",
+    "author": "Marcus Sterling",
+    "role": "Lead Destination Photographer",
+    "organization": "Sterling Weddings & Visuals",
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop",
+    "rating": 5,
+    "project": "Wedding Photography Portfolio"
+  },
+  {
+    "id": 5,
+    "quote": "iWAAt captured the essence of luxury in our online jewelry storefront. The gold-accented dark mode and fluid product interactions have given our brand international credibility.",
+    "author": "Sophia Laurent",
+    "role": "Creative Director",
+    "organization": "Laurent Fine Jewelry",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop",
+    "rating": 5,
+    "project": "Luxury Jewelry Storefront"
+  },
+  {
+    "id": 6,
+    "quote": "The high-energy fitness platform iWAAt engineered boosted our member signups by over 200%. The interactive class scheduler and modern UI make us stand out from national chains.",
+    "author": "David 'Iron' Miller",
+    "role": "Head Trainer & Founder",
+    "organization": "Pulse Fitness Studio",
+    "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop",
+    "rating": 5,
+    "project": "Gym & Fitness Platform"
+  },
+  {
+    "id": 7,
+    "quote": "Our diagnostic lab needed an accurate, high-speed test booking portal. iWAAt delivered flawless search, instant report downloading simulations, and robust SEO ranking.",
+    "author": "Dr. Kavita Sharma",
+    "role": "Chief Pathologist",
+    "organization": "PathoCare Diagnostics Labs",
+    "avatar": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=200&auto=format&fit=crop",
+    "rating": 5,
+    "project": "Pathology Laboratory Portal"
+  },
+  {
+    "id": 8,
+    "quote": "iWAAt's custom web application and CRM automation streamlined our enterprise operations. Their engineering team is reactive, highly communicative, and performance-driven.",
+    "author": "Richard Vance",
+    "role": "CTO & Co-Founder",
+    "organization": "Vance Enterprise Tech",
+    "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=200&auto=format&fit=crop",
+    "rating": 5,
+    "project": "Enterprise SaaS Platform"
+  }
+]

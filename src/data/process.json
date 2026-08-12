@@ -1,0 +1,58 @@
+[
+  {
+    "step": 1,
+    "title": "Discovery & Alignment",
+    "icon": "Compass",
+    "tagline": "Understanding goals, audience & scope",
+    "description": "We begin with deep-dive strategic workshops to analyze your business goals, target demographic, competitive market landscape, and project deliverables.",
+    "deliverables": ["Project Charter", "Competitor Audit", "Requirement Specifications", "Timeline Matrix"]
+  },
+  {
+    "step": 2,
+    "title": "Strategy & Architecture",
+    "icon": "Network",
+    "tagline": "Blueprint, wireframes & tech stack mapping",
+    "description": "Our team outlines information architecture, user journeys, data flow diagrams, and selects optimal frontend and backend technologies for your application.",
+    "deliverables": ["Wireframes", "User Flow Diagrams", "Tech Stack Architecture", "Database Schema Blueprint"]
+  },
+  {
+    "step": 3,
+    "title": "UI/UX & Visual Design",
+    "icon": "Palette",
+    "tagline": "Crafting premium aesthetics & interactive prototypes",
+    "description": "We design high-fidelity visual mockups, design tokens, micro-interactions, and dark/light themes tailored to resonate with your brand identity.",
+    "deliverables": ["Figma UI Kits", "Clickable Prototypes", "Design System Tokens", "Brand Identity Assets"]
+  },
+  {
+    "step": 4,
+    "title": "Agile Development",
+    "icon": "Code",
+    "tagline": "Clean, modular & component-driven engineering",
+    "description": "Our developers write clean, maintainable, pixel-perfect code following modern standards, implementing responsive layouts, API integrations, and smooth animations.",
+    "deliverables": ["Source Code Repository", "RESTful / GraphQL APIs", "Responsive Views", "Component Storybook"]
+  },
+  {
+    "step": 5,
+    "title": "Testing & QA Optimization",
+    "icon": "CheckCircle2",
+    "tagline": "Speed, security & multi-device validation",
+    "description": "Rigorous multi-device testing, cross-browser compatibility checks, accessibility audits, Core Web Vitals speed tuning, and security penetration testing.",
+    "deliverables": ["Lighthouse Audit (95+ score)", "Cross-Browser Test Logs", "Security Compliance Check", "QA Sign-off"]
+  },
+  {
+    "step": 6,
+    "title": "Deployment & Launch",
+    "icon": "Rocket",
+    "tagline": "Zero-downtime deployment & production configuration",
+    "description": "Seamless deployment to high-speed global CDNs (Vercel, AWS, Cloudflare), domain SSL configuration, environment variables, and analytics tracking setup.",
+    "deliverables": ["Live Production Site", "SSL Certificate", "DNS Setup", "Google Search Console Registration"]
+  },
+  {
+    "step": 7,
+    "title": "Growth & Continuous Support",
+    "icon": "TrendingUp",
+    "tagline": "Maintenance, SEO tracking & iterative features",
+    "description": "We don't leave after launch. We provide ongoing 24/7 technical maintenance, security monitoring, SEO keyword optimization, and continuous feature expansion.",
+    "deliverables": ["24/7 Monitoring", "Monthly Performance Reports", "SEO Optimizations", "Dedicated Dev Support"]
+  }
+]

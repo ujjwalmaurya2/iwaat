@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "question": "What digital services does iWAAt specialize in?",
+    "answer": "iWAAt is a full-service digital agency. We specialize in custom Web Development, Software Engineering, UI/UX Design, Branding & Visual Identity, SEO & Digital Marketing, and Ongoing Maintenance & Support. Whether you need a healthcare platform, NGO portal, photography website, gym app, or e-commerce store, we deliver end-to-end solutions."
+  },
+  {
+    "id": 2,
+    "question": "How long does a typical web development project take?",
+    "answer": "Project timelines depend on scope and complexity. Standard business websites and landing pages typically take 2-4 weeks, while complex web applications, custom CRM tools, or multi-functional healthcare/NGO portals take 6-10 weeks from discovery to production launch."
+  },
+  {
+    "id": 3,
+    "question": "Do you provide website maintenance after the project launches?",
+    "answer": "Yes! We offer dedicated maintenance and support packages that cover 24/7 technical assistance, continuous security updates, server monitoring, Core Web Vitals speed optimization, content updates, and monthly growth analytics."
+  },
+  {
+    "id": 4,
+    "question": "Are all iWAAt websites mobile-responsive and SEO-optimized?",
+    "answer": "Absolutely. Every digital experience we engineer is 100% mobile-first responsive across all screen sizes (320px to 4K ultrawide) and built with clean semantic HTML, schema markup, high speed performance, and technical SEO best practices out of the box."
+  },
+  {
+    "id": 5,
+    "question": "Can iWAAt redesign an existing outdated website?",
+    "answer": "Yes, we specialize in complete visual and technical redesigns. We perform a thorough audit of your current site, preserve your existing SEO rankings, and craft a modern, high-converting React/Vite web application."
+  },
+  {
+    "id": 6,
+    "question": "What is the typical engagement model and budget range?",
+    "answer": "We work with fixed-price project contracts as well as monthly dedicated retainer models for enterprise and growing startups. We tailor our proposals to fit your specific scope and ROI goals."
+  },
+  {
+    "id": 7,
+    "question": "How do we get started with a new project?",
+    "answer": "Getting started is simple! You can fill out our interactive contact form, send us an email at hello@iwaat.com, or schedule a direct consultation call. We will review your requirements and deliver a comprehensive proposal within 24 hours."
+  }
+]
