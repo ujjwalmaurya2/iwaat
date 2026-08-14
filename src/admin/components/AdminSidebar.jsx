@@ -133,14 +133,31 @@ export const AdminSidebar = ({ mobileOpen, closeMobile }) => {
 
           {/* User Info & Logout */}
           <div className="flex items-center justify-between gap-2 px-2">
-            <div className="truncate">
-              <p className="text-xs font-bold text-white truncate">{user?.email || 'Super Admin'}</p>
-              <span className="text-[10px] text-violet-400 font-mono">Role: super_admin</span>
+            <div className="flex items-center gap-2.5 truncate">
+              {user?.user_metadata?.avatar_url || user?.avatar_url ? (
+                <img
+                  src={user?.user_metadata?.avatar_url || user?.avatar_url}
+                  alt={user?.email || 'User'}
+                  className="w-8 h-8 rounded-full border border-slate-700 object-cover shrink-0"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-violet-600/30 text-violet-300 font-bold text-xs flex items-center justify-center shrink-0 border border-violet-500/40">
+                  {(user?.email || 'A')[0].toUpperCase()}
+                </div>
+              )}
+              <div className="truncate">
+                <p className="text-xs font-bold text-white truncate">
+                  {user?.user_metadata?.full_name || user?.full_name || user?.email || 'Super Admin'}
+                </p>
+                <span className="text-[10px] text-violet-400 font-mono capitalize">
+                  {user?.role || 'super_admin'}
+                </span>
+              </div>
             </div>
 
             <button
               onClick={logout}
-              className="p-2 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors shrink-0"
+              className="p-2 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors shrink-0 cursor-pointer"
               title="Logout"
             >
               <LogOut className="w-4 h-4" />

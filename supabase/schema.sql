@@ -1,29 +1,88 @@
 -- =================================================================
 -- iWAAT Digital Services - Super Admin CMS & Database Architecture
--- Complete Supabase Schema with Row Level Security (RLS) & Policies
+-- Project: iBot (ref: npqfnzuyglgrzsetrbdo)
+-- Complete Supabase Schema with Google OAuth & Row Level Security (RLS)
 -- =================================================================
 
 -- 1. EXTENSIONS
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- 2. ADMIN PROFILES
-CREATE TABLE IF NOT EXISTS public.admin_profiles (
-  id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
-  email TEXT NOT NULL,
+-- 2. ADMIN USERS & ROLE-BASED ACCESS CONTROL
+CREATE TABLE IF NOT EXISTS public.admin_users (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  auth_user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  email TEXT UNIQUE NOT NULL,
   full_name TEXT,
-  role TEXT NOT NULL DEFAULT 'super_admin',
+  avatar_url TEXT,
+  role TEXT NOT NULL CHECK (role IN ('super_admin', 'content_admin', 'crm_admin')) DEFAULT 'super_admin',
+  status TEXT NOT NULL CHECK (status IN ('pending', 'active', 'disabled')) DEFAULT 'active',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  last_login_at TIMESTAMPTZ
 );
 
--- Helper function to check if current authenticated user is super_admin
+-- Backward compatibility view/synonym for admin_profiles
+CREATE OR REPLACE VIEW public.admin_profiles AS 
+SELECT id, email, full_name, role, created_at, updated_at 
+FROM public.admin_users;
+
+-- Helper function to check if current authenticated user is active super_admin
 CREATE OR REPLACE FUNCTION public.is_super_admin()
 RETURNS BOOLEAN LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$
   SELECT EXISTS (
-    SELECT 1 FROM public.admin_profiles
-    WHERE id = auth.uid() AND role = 'super_admin'
+    SELECT 1 FROM public.admin_users
+    WHERE (auth_user_id = auth.uid() OR email = auth.jwt() ->> 'email')
+      AND role = 'super_admin'
+      AND status = 'active'
   );
 $$;
+
+-- Helper function to check if current user is any active admin
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.admin_users
+    WHERE (auth_user_id = auth.uid() OR email = auth.jwt() ->> 'email')
+      AND status = 'active'
+  );
+$$;
+
+-- Helper trigger for linking Google OAuth sign-in to admin_users table
+CREATE OR REPLACE FUNCTION public.handle_admin_google_login()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM public.admin_users WHERE email = NEW.email) THEN
+    UPDATE public.admin_users
+    SET auth_user_id = NEW.id,
+        full_name = COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', full_name),
+        avatar_url = COALESCE(NEW.raw_user_meta_data->>'avatar_url', NEW.raw_user_meta_data->>'picture', avatar_url),
+        last_login_at = NOW(),
+        updated_at = NOW()
+    WHERE email = NEW.email;
+  ELSE
+    INSERT INTO public.admin_users (auth_user_id, email, full_name, avatar_url, role, status, last_login_at)
+    VALUES (
+      NEW.id,
+      NEW.email,
+      COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', 'Google User'),
+      COALESCE(NEW.raw_user_meta_data->>'avatar_url', NEW.raw_user_meta_data->>'picture', NULL),
+      'content_admin',
+      'pending',
+      NOW()
+    )
+    ON CONFLICT (email) DO UPDATE
+    SET auth_user_id = EXCLUDED.auth_user_id,
+        last_login_at = NOW();
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+-- Connect trigger to auth.users (triggers upon first Google OAuth signup)
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_admin_google_login();
 
 -- 3. PROJECT CATEGORIES
 CREATE TABLE IF NOT EXISTS public.categories (
@@ -116,7 +175,7 @@ CREATE TABLE IF NOT EXISTS public.events (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 8. CLIENT PROJECT INQUIRIES
+-- 8. CLIENT PROJECT INQUIRIES (CRM)
 CREATE TABLE IF NOT EXISTS public.inquiries (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
@@ -208,7 +267,7 @@ CREATE TABLE IF NOT EXISTS public.audit_logs (
 -- ROW LEVEL SECURITY (RLS) POLICIES
 -- =================================================================
 
-ALTER TABLE public.admin_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admin_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
@@ -221,57 +280,57 @@ ALTER TABLE public.media_assets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
 
--- 1. admin_profiles
-CREATE POLICY "Admins can view profiles" ON public.admin_profiles
-  FOR SELECT USING (auth.uid() = id OR public.is_super_admin());
+-- 1. admin_users (Admins can view active team; only Super Admin can edit/invite)
+CREATE POLICY "Admins can view admin_users" ON public.admin_users
+  FOR SELECT USING (auth.uid() = auth_user_id OR public.is_admin());
 
-CREATE POLICY "Super Admins can manage profiles" ON public.admin_profiles
+CREATE POLICY "Super Admins can manage admin_users" ON public.admin_users
   FOR ALL USING (public.is_super_admin());
 
 -- 2. categories (Public Read, Admin Full)
 CREATE POLICY "Public can view categories" ON public.categories
   FOR SELECT USING (true);
 
-CREATE POLICY "Super Admin can manage categories" ON public.categories
-  FOR ALL USING (public.is_super_admin());
+CREATE POLICY "Admins can manage categories" ON public.categories
+  FOR ALL USING (public.is_admin());
 
 -- 3. projects (Public Read published, Admin Full)
 CREATE POLICY "Public can view published projects" ON public.projects
-  FOR SELECT USING (status = 'published' OR public.is_super_admin());
+  FOR SELECT USING (status = 'published' OR public.is_admin());
 
-CREATE POLICY "Super Admin can manage projects" ON public.projects
-  FOR ALL USING (public.is_super_admin());
+CREATE POLICY "Admins can manage projects" ON public.projects
+  FOR ALL USING (public.is_admin());
 
 -- 4. services (Public Read published, Admin Full)
 CREATE POLICY "Public can view published services" ON public.services
-  FOR SELECT USING (status = 'published' OR public.is_super_admin());
+  FOR SELECT USING (status = 'published' OR public.is_admin());
 
-CREATE POLICY "Super Admin can manage services" ON public.services
-  FOR ALL USING (public.is_super_admin());
+CREATE POLICY "Admins can manage services" ON public.services
+  FOR ALL USING (public.is_admin());
 
 -- 5. testimonials (Public Read published, Admin Full)
 CREATE POLICY "Public can view published testimonials" ON public.testimonials
-  FOR SELECT USING (status = 'published' OR public.is_super_admin());
+  FOR SELECT USING (status = 'published' OR public.is_admin());
 
-CREATE POLICY "Super Admin can manage testimonials" ON public.testimonials
-  FOR ALL USING (public.is_super_admin());
+CREATE POLICY "Admins can manage testimonials" ON public.testimonials
+  FOR ALL USING (public.is_admin());
 
 -- 6. events (Public Read published, Admin Full)
 CREATE POLICY "Public can view published events" ON public.events
-  FOR SELECT USING (status = 'published' OR public.is_super_admin());
+  FOR SELECT USING (status = 'published' OR public.is_admin());
 
-CREATE POLICY "Super Admin can manage events" ON public.events
-  FOR ALL USING (public.is_super_admin());
+CREATE POLICY "Admins can manage events" ON public.events
+  FOR ALL USING (public.is_admin());
 
--- 7. inquiries (Public can INSERT, Super Admin can READ/UPDATE/DELETE)
+-- 7. inquiries (Public can INSERT, Admins can READ/UPDATE/DELETE)
 CREATE POLICY "Anyone can submit inquiry" ON public.inquiries
   FOR INSERT WITH CHECK (true);
 
-CREATE POLICY "Super Admin can manage inquiries" ON public.inquiries
-  FOR SELECT USING (public.is_super_admin());
+CREATE POLICY "Admins can manage inquiries" ON public.inquiries
+  FOR SELECT USING (public.is_admin());
 
-CREATE POLICY "Super Admin can update inquiries" ON public.inquiries
-  FOR UPDATE USING (public.is_super_admin());
+CREATE POLICY "Admins can update inquiries" ON public.inquiries
+  FOR UPDATE USING (public.is_admin());
 
 CREATE POLICY "Super Admin can delete inquiries" ON public.inquiries
   FOR DELETE USING (public.is_super_admin());
@@ -294,19 +353,29 @@ CREATE POLICY "Super Admin can update website settings" ON public.website_settin
 CREATE POLICY "Public can view media assets" ON public.media_assets
   FOR SELECT USING (true);
 
-CREATE POLICY "Super Admin can manage media assets" ON public.media_assets
-  FOR ALL USING (public.is_super_admin());
+CREATE POLICY "Admins can manage media assets" ON public.media_assets
+  FOR ALL USING (public.is_admin());
 
--- 11. notifications (Super Admin only)
-CREATE POLICY "Super Admin can view and manage notifications" ON public.notifications
-  FOR ALL USING (public.is_super_admin());
+-- 11. notifications (Admins only)
+CREATE POLICY "Admins can view and manage notifications" ON public.notifications
+  FOR ALL USING (public.is_admin());
 
--- 12. audit_logs (Super Admin only)
-CREATE POLICY "Super Admin can view and manage audit logs" ON public.audit_logs
-  FOR ALL USING (public.is_super_admin());
+-- 12. audit_logs (Admins only)
+CREATE POLICY "Admins can view and create audit logs" ON public.audit_logs
+  FOR ALL USING (public.is_admin());
 
 -- =================================================================
--- STORAGE BUCKETS CONFIGURATION (Run in Supabase SQL editor)
+-- INITIAL SUPER ADMIN SEED
+-- =================================================================
+INSERT INTO public.admin_users (email, full_name, role, status)
+VALUES 
+  ('ujjwalmaurya2@gmail.com', 'Ujjwal Maurya', 'super_admin', 'active'),
+  ('admin@iwaat.com', 'iWAAT Super Admin', 'super_admin', 'active')
+ON CONFLICT (email) DO UPDATE 
+SET role = 'super_admin', status = 'active';
+
+-- =================================================================
+-- STORAGE BUCKETS CONFIGURATION
 -- =================================================================
 INSERT INTO storage.buckets (id, name, public) 
 VALUES ('iwaat-media', 'iwaat-media', true)
@@ -316,7 +385,7 @@ CREATE POLICY "Public Access iwaat-media" ON storage.objects
   FOR SELECT USING (bucket_id = 'iwaat-media');
 
 CREATE POLICY "Admin Upload iwaat-media" ON storage.objects
-  FOR INSERT WITH CHECK (bucket_id = 'iwaat-media' AND (auth.role() = 'authenticated' OR public.is_super_admin()));
+  FOR INSERT WITH CHECK (bucket_id = 'iwaat-media' AND (auth.role() = 'authenticated' OR public.is_admin()));
 
 CREATE POLICY "Admin Delete iwaat-media" ON storage.objects
   FOR DELETE USING (bucket_id = 'iwaat-media' AND (auth.role() = 'authenticated' OR public.is_super_admin()));

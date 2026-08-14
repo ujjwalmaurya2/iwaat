@@ -5,9 +5,35 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [adminProfile, setAdminProfile] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
+
+  // Helper to verify admin status from database
+  const verifyAdminInDb = async (authUser) => {
+    if (!authUser || !supabase) return null;
+    try {
+      // Check admin_users table by auth_user_id or email
+      const { data, error } = await supabase
+        .from('admin_users')
+        .select('*')
+        .or(`auth_user_id.eq.${authUser.id},email.eq.${authUser.email}`)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.warn('[Auth] Error querying admin_users:', error.message);
+      }
+
+      if (data && data.status === 'active') {
+        return data;
+      }
+      return null;
+    } catch (e) {
+      console.error('[Auth] verifyAdminInDb error:', e);
+      return null;
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -15,38 +41,34 @@ export const AuthProvider = ({ children }) => {
     async function initAuth() {
       try {
         if (isSupabaseConfigured() && supabase) {
-          // 1. Production Supabase Auth Mode
+          // 1. Check active Supabase session (Google OAuth)
           const { data: { session } } = await supabase.auth.getSession();
           if (session?.user && isMounted) {
             setUser(session.user);
-            
-            // Verify super_admin role in admin_profiles
-            const { data: profile } = await supabase
-              .from('admin_profiles')
-              .select('role')
-              .eq('id', session.user.id)
-              .single();
-
-            const isSuperAdmin = profile?.role === 'super_admin' || session.user.user_metadata?.role === 'super_admin';
-            setIsAdmin(isSuperAdmin);
-          } else {
+            const profile = await verifyAdminInDb(session.user);
+            if (isMounted) {
+              setAdminProfile(profile);
+              setIsAdmin(Boolean(profile && profile.status === 'active'));
+            }
+          } else if (isMounted) {
             setUser(null);
+            setAdminProfile(null);
             setIsAdmin(false);
           }
 
-          // Listen for auth changes
-          const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+          // Listen for Supabase auth state transitions (OAuth redirects)
+          const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
             if (!isMounted) return;
             if (session?.user) {
               setUser(session.user);
-              const { data: profile } = await supabase
-                .from('admin_profiles')
-                .select('role')
-                .eq('id', session.user.id)
-                .single();
-              setIsAdmin(profile?.role === 'super_admin' || session.user.user_metadata?.role === 'super_admin');
+              const profile = await verifyAdminInDb(session.user);
+              if (isMounted) {
+                setAdminProfile(profile);
+                setIsAdmin(Boolean(profile && profile.status === 'active'));
+              }
             } else {
               setUser(null);
+              setAdminProfile(null);
               setIsAdmin(false);
             }
           });
@@ -55,13 +77,16 @@ export const AuthProvider = ({ children }) => {
             authListener?.subscription?.unsubscribe();
           };
         } else {
-          // 2. Local Fallback / Development Session Mode
-          const storedLocalSession = localStorage.getItem('iwaat_admin_session');
-          if (storedLocalSession && isMounted) {
-            const parsed = JSON.parse(storedLocalSession);
-            if (parsed.email && parsed.role === 'super_admin') {
-              setUser(parsed);
-              setIsAdmin(true);
+          // 2. Development offline test mode (strictly disabled in production)
+          if (import.meta.env.DEV) {
+            const storedLocalSession = localStorage.getItem('iwaat_admin_session');
+            if (storedLocalSession && isMounted) {
+              const parsed = JSON.parse(storedLocalSession);
+              if (parsed.email && parsed.role === 'super_admin' && parsed.status === 'active') {
+                setUser(parsed);
+                setAdminProfile(parsed);
+                setIsAdmin(true);
+              }
             }
           }
         }
@@ -79,70 +104,67 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  const login = async (email, password) => {
+  // Google OAuth Login
+  const loginWithGoogle = async () => {
     setAuthError(null);
     setLoading(true);
 
     try {
       if (isSupabaseConfigured() && supabase) {
-        // Supabase Cloud Auth
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password: password,
+        // Production: Redirect to Supabase Google OAuth Provider
+        const redirectTo = `${window.location.origin}/super-admin`;
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo,
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'select_account',
+            },
+          },
         });
 
         if (error) throw error;
-
-        // Verify role
-        const { data: profile } = await supabase
-          .from('admin_profiles')
-          .select('role')
-          .eq('id', data.user.id)
-          .single();
-
-        const isSuperAdmin = profile?.role === 'super_admin' || data.user.user_metadata?.role === 'super_admin';
-        if (!isSuperAdmin) {
-          await supabase.auth.signOut();
-          throw new Error('Access denied: Unauthorized admin role.');
-        }
-
-        setUser(data.user);
-        setIsAdmin(true);
-        return { success: true, user: data.user };
+        return { success: true };
       } else {
-        // Development-Only Fallback Admin Mode (strictly disabled in production)
-        if (!import.meta.env.DEV) {
-          throw new Error('Production authentication requires valid Supabase Auth credentials.');
-        }
-
-        const validEmail = email.trim().toLowerCase();
-        if (
-          (validEmail === 'admin@iwaat.com' || validEmail === 'superadmin@iwaat.com' || validEmail === 'ujjwalmaurya2@gmail.com') &&
-          password.length >= 6
-        ) {
-          const localUser = {
-            id: 'super-admin-local-id',
-            email: validEmail,
-            role: 'super_admin',
-            name: 'Super Admin',
-            created_at: new Date().toISOString(),
-          };
-          localStorage.setItem('iwaat_admin_session', JSON.stringify(localUser));
-          setUser(localUser);
-          setIsAdmin(true);
-          return { success: true, user: localUser };
-        } else {
-          throw new Error('Invalid email or password. Use your Super Admin credentials (min 6 chars).');
-        }
+        // If Supabase credentials are not yet configured
+        throw new Error(
+          'Supabase project credentials not configured. Please supply VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
+        );
       }
     } catch (err) {
-      setAuthError(err.message || 'Authentication failed');
+      console.error('[Auth] Google OAuth Error:', err);
+      setAuthError(err.message || 'Google authentication failed');
       return { success: false, error: err.message };
     } finally {
       setLoading(false);
     }
   };
 
+  // Local development mock login (strictly disabled in production)
+  const loginDevMock = async (email = 'ujjwalmaurya2@gmail.com') => {
+    if (!import.meta.env.DEV) {
+      throw new Error('Development mock login is disabled in production builds.');
+    }
+
+    const mockAdmin = {
+      id: 'mock-super-admin-id',
+      email,
+      full_name: 'Ujjwal Maurya (Dev)',
+      role: 'super_admin',
+      status: 'active',
+      avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80',
+      created_at: new Date().toISOString(),
+    };
+
+    localStorage.setItem('iwaat_admin_session', JSON.stringify(mockAdmin));
+    setUser(mockAdmin);
+    setAdminProfile(mockAdmin);
+    setIsAdmin(true);
+    return { success: true, user: mockAdmin };
+  };
+
+  // Sign out
   const logout = async () => {
     setLoading(true);
     try {
@@ -151,6 +173,7 @@ export const AuthProvider = ({ children }) => {
       }
       localStorage.removeItem('iwaat_admin_session');
       setUser(null);
+      setAdminProfile(null);
       setIsAdmin(false);
     } catch (err) {
       console.error('[Auth] Logout error:', err);
@@ -163,11 +186,13 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
+        adminProfile,
         isAdmin,
         loading,
         authError,
         isSupabase: isSupabaseConfigured(),
-        login,
+        loginWithGoogle,
+        loginDevMock,
         logout,
       }}
     >
