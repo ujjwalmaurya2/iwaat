@@ -57,7 +57,7 @@ export async function seedInitialDataIfNeeded() {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }));
-      await db.projects.bulkAdd(formattedProjects);
+      await db.projects.bulkPut(formattedProjects);
 
       // 2. Categories
       const categoriesMap = new Map();
@@ -90,7 +90,7 @@ export async function seedInitialDataIfNeeded() {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }));
-      await db.services.bulkAdd(formattedServices);
+      await db.services.bulkPut(formattedServices);
 
       // 4. Testimonials
       const formattedTestimonials = initialTestimonials.map((t, idx) => ({
@@ -108,7 +108,7 @@ export async function seedInitialDataIfNeeded() {
         display_order: idx,
         created_at: new Date().toISOString()
       }));
-      await db.testimonials.bulkAdd(formattedTestimonials);
+      await db.testimonials.bulkPut(formattedTestimonials);
 
       // 5. Events / Gallery Seed
       const initialEvents = [
@@ -140,7 +140,7 @@ export async function seedInitialDataIfNeeded() {
           updated_at: new Date().toISOString()
         }
       ];
-      await db.events.bulkAdd(initialEvents);
+      await db.events.bulkPut(initialEvents);
 
       // 6. Contact Settings
       const initialContactSettings = {
