@@ -20,8 +20,11 @@ export const ProjectCard = ({ project, index = 0 }) => {
         {/* Project Image & Overlay */}
         <div className="relative aspect-[16/10] overflow-hidden bg-slate-900 cursor-pointer" onClick={() => setModalOpen(true)} data-cursor="VIEW">
           <img
-            src={project.image}
+            src={project.preview_url || project.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop'}
             alt={project.title}
+            onError={(e) => {
+              e.target.src = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop';
+            }}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
           />
 

@@ -249,10 +249,12 @@ export const CMSProvider = ({ children }) => {
       category_slug,
       client_name: data.client_name || title.split(' ')[0] || 'Client',
       url: data.url || '',
-      image: data.image || '',
-      preview_status: data.preview_status || 'ready',
-      preview_source: data.preview_source || 'auto',
+      image: data.image || data.preview_url || '',
+      preview_status: data.preview_status || 'idle',
+      preview_source: data.preview_source || null,
+      preview_url: data.preview_url || data.image || null,
       preview_updated_at: data.preview_updated_at || new Date().toISOString(),
+      preview_error: data.preview_error || null,
       logo: data.logo || '',
       featured: Boolean(data.featured),
       status: data.status || 'published',
@@ -284,11 +286,13 @@ export const CMSProvider = ({ children }) => {
           if (
             error.message?.includes('preview_source') ||
             error.message?.includes('preview_status') ||
+            error.message?.includes('preview_url') ||
+            error.message?.includes('preview_error') ||
             error.message?.includes('preview_updated_at') ||
             error.code === 'PGRST204'
           ) {
             console.warn('[CMS Supabase] Column missing in schema cache, inserting core project payload...', error.message);
-            const { preview_source, preview_status, preview_updated_at, ...corePayload } = newProject;
+            const { preview_source, preview_status, preview_url, preview_error, preview_updated_at, ...corePayload } = newProject;
             const { error: coreErr } = await supabase.from('projects').insert([corePayload]);
             if (coreErr) throw coreErr;
           } else {
@@ -321,11 +325,13 @@ export const CMSProvider = ({ children }) => {
           if (
             error.message?.includes('preview_source') ||
             error.message?.includes('preview_status') ||
+            error.message?.includes('preview_url') ||
+            error.message?.includes('preview_error') ||
             error.message?.includes('preview_updated_at') ||
             error.code === 'PGRST204'
           ) {
             console.warn('[CMS Supabase] Column missing in schema cache on update, updating core project payload...', error.message);
-            const { preview_source, preview_status, preview_updated_at, ...corePayload } = updated;
+            const { preview_source, preview_status, preview_url, preview_error, preview_updated_at, ...corePayload } = updated;
             const { error: coreErr } = await supabase.from('projects').update(corePayload).eq('id', id);
             if (coreErr) throw coreErr;
           } else {
@@ -341,6 +347,37 @@ export const CMSProvider = ({ children }) => {
     setProjects((prev) => prev.map((p) => (p.id === id ? updated : p)));
     await logAudit('UPDATE', 'PROJECT', id, `Updated project "${updated.title || id}"`);
     return updated;
+  };
+
+  const updateProjectPreview = async (id, previewFields) => {
+    const existing = projects.find((p) => p.id === id) || (await db.projects.get(id));
+    if (!existing) return;
+
+    const merged = {
+      ...existing,
+      ...previewFields,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (isSupabaseConfigured() && supabase) {
+      try {
+        const payload = {
+          preview_status: previewFields.preview_status || existing.preview_status,
+          preview_source: previewFields.preview_source || existing.preview_source,
+          preview_url: previewFields.preview_url || existing.preview_url,
+          preview_updated_at: previewFields.preview_updated_at || new Date().toISOString(),
+          preview_error: previewFields.preview_error ?? existing.preview_error ?? null,
+          image: previewFields.preview_url || existing.image,
+        };
+        await supabase.from('projects').update(payload).eq('id', id);
+      } catch (err) {
+        console.warn('[CMS Context] updateProjectPreview Supabase note:', err.message);
+      }
+    }
+
+    await db.projects.put(merged);
+    setProjects((prev) => prev.map((p) => (p.id === id ? merged : p)));
+    return merged;
   };
 
   const deleteProject = async (id) => {
@@ -791,6 +828,7 @@ export const CMSProvider = ({ children }) => {
         // Projects
         addProject,
         updateProject,
+        updateProjectPreview,
         deleteProject,
         toggleProjectPublish,
         toggleProjectFeatured,

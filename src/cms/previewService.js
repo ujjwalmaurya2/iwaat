@@ -1,8 +1,8 @@
 /**
- * iWAAT Digital Services - Multi-Provider Website Screenshot & Preview Engine
- * Robust, timeout-guarded pipeline for capturing real rendered client websites.
+ * iWAAT Digital Services - Production-Grade Website Preview System
+ * Decoupled, multi-provider pipeline with Edge Function server-side capture and Zero-CORS browser fallback.
  */
-import { supabase, isSupabaseConfigured, uploadToSupabaseStorage } from './supabase.js';
+import { supabase, isSupabaseConfigured } from './supabase.js';
 
 /**
  * Normalizes input website URL to standard full HTTPS/HTTP canonical URL
@@ -14,7 +14,6 @@ export function normalizeUrl(inputUrl) {
   let url = inputUrl.trim();
   if (url === '#' || url.startsWith('javascript:')) return '';
 
-  // If user pasted without protocol (e.g. "myclient.com" or "www.myclient.com")
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
     url = `https://${url}`;
   }
@@ -25,21 +24,21 @@ export function normalizeUrl(inputUrl) {
       return '';
     }
     return parsed.href;
-  } catch (e) {
+  } catch {
     return '';
   }
 }
 
 /**
- * Verifies that an image URL loads valid image pixels within a strict timeout
+ * Verifies that an image URL renders valid pixels in the browser
+ * NOTE: Uses HTMLImageElement. Never uses fetch() to prevent CORS blocks.
  * @param {string} imageUrl 
  * @param {number} timeoutMs 
  * @returns {Promise<boolean>}
  */
-export async function verifyImageLoads(imageUrl, timeoutMs = 8000) {
+export async function verifyImageLoads(imageUrl, timeoutMs = 7000) {
   if (!imageUrl) return false;
 
-  // Browser DOM environment with HTMLImageElement
   if (typeof Image !== 'undefined') {
     return new Promise((resolve) => {
       const img = new Image();
@@ -56,8 +55,7 @@ export async function verifyImageLoads(imageUrl, timeoutMs = 8000) {
         if (!isResolved) {
           isResolved = true;
           clearTimeout(timer);
-          // Ensure image has real dimensions (reject 0x0 or 1x1 error pixels)
-          resolve(img.naturalWidth > 30 && img.naturalHeight > 30);
+          resolve(img.naturalWidth > 20 && img.naturalHeight > 20);
         }
       };
 
@@ -73,62 +71,29 @@ export async function verifyImageLoads(imageUrl, timeoutMs = 8000) {
     });
   }
 
-  // Node.js or Web Worker environment without DOM
+  // Node.js or non-DOM test environments
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     const res = await fetch(imageUrl, { method: 'HEAD', signal: controller.signal });
     clearTimeout(timer);
-    if (res.ok) {
-      const type = res.headers.get('content-type') || '';
-      return type.startsWith('image/') || type === 'binary/octet-stream';
-    }
-    return false;
-  } catch (e) {
+    return res.ok;
+  } catch {
     return false;
   }
 }
 
 /**
- * Optional helper to upload captured screenshot blob/URL into Supabase Storage
- * @param {string} imageUrl 
- * @param {string} projectSlug 
- * @returns {Promise<string>} Permanent public storage URL, or original imageUrl if storage fails
- */
-export async function persistScreenshotToStorage(imageUrl, projectSlug = 'preview') {
-  if (!isSupabaseConfigured() || !supabase) return imageUrl;
-
-  try {
-    // Attempt to fetch the image as a Blob with a 6s timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
-    
-    const res = await fetch(imageUrl, { signal: controller.signal, mode: 'cors' });
-    clearTimeout(timeoutId);
-
-    if (res.ok) {
-      const blob = await res.blob();
-      const filename = `previews/${projectSlug}-${Date.now()}.webp`;
-      const publicUrl = await uploadToSupabaseStorage('iwaat-media', filename, blob);
-      if (publicUrl) {
-        console.log('[Preview] Uploaded screenshot to Supabase Storage:', publicUrl);
-        return publicUrl;
-      }
-    }
-  } catch (uploadErr) {
-    console.warn('[Preview] Storage upload note (using direct CDN screenshot URL):', uploadErr.message);
-  }
-
-  return imageUrl;
-}
-
-/**
- * Generates an actual website screenshot preview using a multi-provider fallback pipeline
+ * Generates an actual website screenshot preview
+ * 1. Tries Supabase Edge Function server-side capture (saving to Supabase Storage)
+ * 2. Falls back to multi-provider direct verified URL cascade (Zero-CORS)
+ * 
  * @param {string} rawUrl 
- * @param {string} [projectSlug='preview'] 
- * @returns {Promise<{ previewUrl: string, status: 'success' | 'failed', provider?: string, timestamp?: string, message?: string }>}
+ * @param {string} [projectId] 
+ * @param {string} [slug='preview'] 
+ * @returns {Promise<{ previewUrl: string, status: 'ready' | 'failed', provider?: string, timestamp?: string, message?: string }>}
  */
-export async function generateWebsitePreview(rawUrl, projectSlug = 'preview') {
+export async function generateWebsitePreview(rawUrl, projectId = '', slug = 'preview') {
   const url = normalizeUrl(rawUrl);
 
   console.log('[Preview] Starting preview generation for:', rawUrl);
@@ -142,80 +107,104 @@ export async function generateWebsitePreview(rawUrl, projectSlug = 'preview') {
     };
   }
 
+  const safeSlug = slug.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
   // ============================================================
-  // PROVIDER 1: Microlink Official JSON API (1440x900 Viewport)
+  // TIER 1: Supabase Edge Function (Server-Side Capture & Storage)
+  // ============================================================
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      console.log('[Preview] Attempting Edge Function server-side screenshot generation...');
+      const { data, error } = await supabase.functions.invoke('generate-project-preview', {
+        body: {
+          project_id: projectId,
+          website_url: url,
+          slug: safeSlug,
+        },
+      });
+
+      if (!error && data && (data.success || data.preview_url)) {
+        console.log('[Preview] Edge function successfully returned preview:', data.preview_url);
+        return {
+          previewUrl: data.preview_url,
+          status: 'ready',
+          provider: data.preview_source || 'edge-function',
+          timestamp: data.preview_updated_at || new Date().toISOString(),
+        };
+      }
+    } catch (edgeErr) {
+      console.warn('[Preview] Edge function unavailable, proceeding with direct verified provider cascade...', edgeErr.message);
+    }
+  }
+
+  // ============================================================
+  // TIER 2: Microlink Official JSON API (Zero-CORS URL Resolution)
   // ============================================================
   try {
-    console.log('[Preview] Trying Provider 1: Microlink...');
+    console.log('[Preview] Trying Provider: Microlink...');
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 9000); // 9s hard timeout
+    const timeoutId = setTimeout(() => controller.abort(), 9000);
 
     const mlApiUrl = `https://api.microlink.io?url=${encodeURIComponent(url)}&screenshot=true&meta=false&viewport.width=1440&viewport.height=900&waitForTimeout=1000`;
     const res = await fetch(mlApiUrl, { signal: controller.signal });
     clearTimeout(timeoutId);
 
     if (res.ok) {
-      const contentType = res.headers.get('content-type') || '';
-      if (contentType.includes('application/json')) {
-        const json = await res.json();
-        if (json.status === 'success' && json.data?.screenshot?.url) {
-          const rawScreenshotUrl = json.data.screenshot.url;
-          console.log('[Preview] Microlink returned screenshot URL:', rawScreenshotUrl);
+      const json = await res.json();
+      if (json.status === 'success' && json.data?.screenshot?.url) {
+        const screenshotUrl = json.data.screenshot.url;
+        console.log('[Preview] Microlink returned screenshot URL:', screenshotUrl);
 
-          const isValidImage = await verifyImageLoads(rawScreenshotUrl, 6000);
-          if (isValidImage) {
-            console.log('[Preview] Microlink screenshot verified successfully!');
-            const finalUrl = await persistScreenshotToStorage(rawScreenshotUrl, projectSlug);
-            return {
-              previewUrl: finalUrl,
-              status: 'success',
-              provider: 'microlink',
-              timestamp: new Date().toISOString(),
-            };
-          }
+        const isValid = await verifyImageLoads(screenshotUrl, 6000);
+        if (isValid) {
+          console.log('[Preview] Microlink screenshot verified successfully!');
+          return {
+            previewUrl: screenshotUrl,
+            status: 'ready',
+            provider: 'microlink',
+            timestamp: new Date().toISOString(),
+          };
         }
       }
     }
-    console.warn('[Preview] Microlink failed or non-200 response. Trying fallback...');
+    console.warn('[Preview] Microlink response invalid or failed verification. Trying fallback...');
   } catch (err) {
-    console.warn('[Preview] Microlink error/timeout:', err.name === 'AbortError' ? 'Timeout (9s exceeded)' : err.message);
+    console.warn('[Preview] Microlink error/timeout:', err.name === 'AbortError' ? 'Timeout (9s)' : err.message);
   }
 
   // ============================================================
-  // PROVIDER 2: WordPress mShots Service (High-Speed Viewport Render)
+  // TIER 3: WordPress mShots Service
   // ============================================================
   try {
-    console.log('[Preview] Trying Provider 2: WordPress mShots...');
+    console.log('[Preview] Trying Provider: WordPress mShots...');
     const mshotsUrl = `https://s0.wp.com/mshots/v1/${encodeURIComponent(url)}?w=1440&h=900`;
-    const isValidImage = await verifyImageLoads(mshotsUrl, 7000);
-    if (isValidImage) {
-      console.log('[Preview] WordPress mShots screenshot verified successfully!');
-      const finalUrl = await persistScreenshotToStorage(mshotsUrl, projectSlug);
+    const isValid = await verifyImageLoads(mshotsUrl, 7000);
+    if (isValid) {
+      console.log('[Preview] WordPress mShots verified successfully!');
       return {
-        previewUrl: finalUrl,
-        status: 'success',
+        previewUrl: mshotsUrl,
+        status: 'ready',
         provider: 'mshots',
         timestamp: new Date().toISOString(),
       };
     }
-    console.warn('[Preview] WordPress mShots failed. Trying fallback...');
+    console.warn('[Preview] WordPress mShots verification failed. Trying fallback...');
   } catch (err) {
     console.warn('[Preview] WordPress mShots error:', err.message);
   }
 
   // ============================================================
-  // PROVIDER 3: Thum.io Live Capture Engine
+  // TIER 4: Thum.io Live Capture Engine
   // ============================================================
   try {
-    console.log('[Preview] Trying Provider 3: Thum.io...');
+    console.log('[Preview] Trying Provider: Thum.io...');
     const thumUrl = `https://image.thum.io/get/width/1440/crop/900/noanimate/${url}`;
-    const isValidImage = await verifyImageLoads(thumUrl, 7000);
-    if (isValidImage) {
-      console.log('[Preview] Thum.io screenshot verified successfully!');
-      const finalUrl = await persistScreenshotToStorage(thumUrl, projectSlug);
+    const isValid = await verifyImageLoads(thumUrl, 7000);
+    if (isValid) {
+      console.log('[Preview] Thum.io verified successfully!');
       return {
-        previewUrl: finalUrl,
-        status: 'success',
+        previewUrl: thumUrl,
+        status: 'ready',
         provider: 'thum.io',
         timestamp: new Date().toISOString(),
       };
@@ -226,18 +215,17 @@ export async function generateWebsitePreview(rawUrl, projectSlug = 'preview') {
   }
 
   // ============================================================
-  // PROVIDER 4: S-Shot Live Render Engine
+  // TIER 5: S-Shot Live Render Engine
   // ============================================================
   try {
-    console.log('[Preview] Trying Provider 4: S-Shot...');
+    console.log('[Preview] Trying Provider: S-Shot...');
     const sshotUrl = `https://mini.s-shot.ru/1440x900/JPEG/1440/Z100/?${encodeURIComponent(url)}`;
-    const isValidImage = await verifyImageLoads(sshotUrl, 7000);
-    if (isValidImage) {
-      console.log('[Preview] S-Shot screenshot verified successfully!');
-      const finalUrl = await persistScreenshotToStorage(sshotUrl, projectSlug);
+    const isValid = await verifyImageLoads(sshotUrl, 7000);
+    if (isValid) {
+      console.log('[Preview] S-Shot verified successfully!');
       return {
-        previewUrl: finalUrl,
-        status: 'success',
+        previewUrl: sshotUrl,
+        status: 'ready',
         provider: 's-shot',
         timestamp: new Date().toISOString(),
       };
@@ -248,9 +236,9 @@ export async function generateWebsitePreview(rawUrl, projectSlug = 'preview') {
   }
 
   // ============================================================
-  // ALL PROVIDERS FAILED
+  // ALL PROVIDERS EXHAUSTED: Return structured non-fatal failure
   // ============================================================
-  console.log('[Preview] All automated screenshot providers exhausted. Requesting manual upload.');
+  console.log('[Preview] All automated screenshot providers exhausted.');
   return {
     previewUrl: '',
     status: 'failed',

@@ -31,7 +31,7 @@ export const ProjectEditor = () => {
   const navigate = useNavigate();
   const isEditing = Boolean(id);
 
-  const { projects, categories: dbCategories, addProject, updateProject } = useCMS();
+  const { projects, categories: dbCategories, addProject, updateProject, updateProjectPreview } = useCMS();
 
   // Combine static official 39 industry categories with any custom admin categories
   const allCategories = useMemo(() => {
@@ -211,6 +211,7 @@ export const ProjectEditor = () => {
       .filter(Boolean);
 
     const selectedCatObj = allCategories.find((c) => c.name.toLowerCase() === category.toLowerCase());
+    const normalizedUrl = normalizeUrl(url) || url;
 
     const projectPayload = {
       title,
@@ -221,7 +222,7 @@ export const ProjectEditor = () => {
       category,
       category_slug: selectedCatObj?.slug || category.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       client_name: clientName || title.split(' ')[0],
-      url: normalizeUrl(url) || url,
+      url: normalizedUrl,
       image: image || '',
       preview_status: previewStatus,
       preview_source: previewSource,
@@ -235,15 +236,37 @@ export const ProjectEditor = () => {
     };
 
     try {
+      let savedProject = null;
       if (isEditing) {
-        await updateProject(id, projectPayload);
+        savedProject = await updateProject(id, projectPayload);
       } else {
-        await addProject(projectPayload);
+        savedProject = await addProject(projectPayload);
       }
+
       setSaveSuccess(true);
+
+      // If project has a URL but no preview image, trigger asynchronous preview generation in background
+      if (normalizedUrl && !image && savedProject?.id) {
+        generateWebsitePreview(normalizedUrl, savedProject.id, savedProject.slug)
+          .then((res) => {
+            if (res.status === 'ready' && res.previewUrl) {
+              updateProjectPreview(savedProject.id, {
+                preview_url: res.previewUrl,
+                preview_source: res.provider || 'auto',
+                preview_status: 'ready',
+                preview_updated_at: res.timestamp || new Date().toISOString(),
+                preview_error: null,
+              });
+            }
+          })
+          .catch((err) => {
+            console.warn('[ProjectEditor] Background preview generation note:', err.message);
+          });
+      }
+
       setTimeout(() => {
         navigate('/super-admin/projects');
-      }, 1000);
+      }, 800);
     } catch (err) {
       console.error('Failed to save project:', err);
       alert('Error saving project: ' + err.message);

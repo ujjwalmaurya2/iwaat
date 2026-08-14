@@ -105,9 +105,11 @@ CREATE TABLE IF NOT EXISTS public.projects (
   description TEXT NOT NULL,
   long_description TEXT,
   image TEXT NOT NULL,
-  preview_status TEXT DEFAULT 'ready',
-  preview_source TEXT DEFAULT 'auto',
+  preview_status TEXT DEFAULT 'idle',
+  preview_source TEXT,
+  preview_url TEXT,
   preview_updated_at TIMESTAMPTZ DEFAULT NOW(),
+  preview_error TEXT,
   logo TEXT,
   featured BOOLEAN DEFAULT FALSE,
   status TEXT DEFAULT 'published', -- 'published' or 'draft'

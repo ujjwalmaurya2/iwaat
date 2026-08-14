@@ -50,8 +50,11 @@ export const ProjectModal = ({ project, onClose }) => {
             {/* Project Image Banner */}
             <div className="relative rounded-2xl overflow-hidden aspect-video border border-slate-200 dark:border-slate-800 shadow-lg">
               <img
-                src={project.image}
+                src={project.preview_url || project.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop'}
                 alt={project.title}
+                onError={(e) => {
+                  e.target.src = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop';
+                }}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end p-6">
