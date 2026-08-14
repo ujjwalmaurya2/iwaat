@@ -19,6 +19,7 @@ import {
   Clock,
   ShieldCheck,
   X,
+  RotateCcw,
 } from 'lucide-react';
 import { useCMS } from '../../cms/cmsContext';
 import { generateWebsitePreview, normalizeUrl } from '../../cms/previewService';
@@ -35,9 +36,7 @@ export const ProjectEditor = () => {
   // Combine static official 39 industry categories with any custom admin categories
   const allCategories = useMemo(() => {
     const map = new Map();
-    // 1. Preload 39 standard categories
     INDUSTRY_CATEGORIES.forEach((c) => map.set(c.name.toLowerCase(), c));
-    // 2. Merge DB custom categories
     (dbCategories || []).forEach((c) => {
       if (!map.has(c.name.toLowerCase())) {
         map.set(c.name.toLowerCase(), {
@@ -57,7 +56,6 @@ export const ProjectEditor = () => {
   const [description, setDescription] = useState('');
   const [longDescription, setLongDescription] = useState('');
   const [category, setCategory] = useState('Healthcare');
-  const [categorySearch, setCategorySearch] = useState('');
   const [clientName, setClientName] = useState('');
   const [url, setUrl] = useState('');
   const [image, setImage] = useState('');
@@ -115,7 +113,7 @@ export const ProjectEditor = () => {
   // Auto-generate live website screenshot from URL
   const handleGeneratePreview = async () => {
     const normalized = normalizeUrl(url);
-    if (!normalized || normalized === '#') {
+    if (!normalized) {
       setPreviewMessageType('error');
       setPreviewMessage('Website URL is invalid. Please enter a valid address (e.g. https://example.com).');
       return;
@@ -127,10 +125,12 @@ export const ProjectEditor = () => {
     setPreviewMessage('');
 
     try {
-      const result = await generateWebsitePreview(normalized);
+      const slug = (title || 'project').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      const result = await generateWebsitePreview(normalized, slug);
+
       if (result.status === 'success' && result.previewUrl) {
         setImage(result.previewUrl);
-        setPreviewStatus('generated');
+        setPreviewStatus('ready');
         setPreviewSource(result.provider || 'auto');
         setPreviewUpdatedAt(result.timestamp || new Date().toISOString());
         setPreviewMessageType('success');
@@ -138,12 +138,13 @@ export const ProjectEditor = () => {
       } else {
         setPreviewMessageType('error');
         setPreviewMessage(
-          result.message || 'Unable to automatically capture this website. The website may block external screenshots. Please upload a screenshot manually.'
+          result.message || 'Automatic preview generation failed for this website. The website may block external crawlers. Please upload a screenshot manually.'
         );
       }
     } catch (err) {
+      console.error('[ProjectEditor] Preview error:', err);
       setPreviewMessageType('error');
-      setPreviewMessage('Unable to automatically capture this website. Please upload a screenshot manually.');
+      setPreviewMessage('Automatic preview unavailable for this website. Please upload a screenshot manually.');
     } finally {
       setIsGeneratingPreview(false);
       setGeneratingStepText('');
@@ -158,7 +159,7 @@ export const ProjectEditor = () => {
     try {
       const optimizedWebP = await optimizeImage(file);
       setImage(optimizedWebP);
-      setPreviewStatus('custom_upload');
+      setPreviewStatus('ready');
       setPreviewSource('manual');
       setPreviewUpdatedAt(new Date().toISOString());
       setPreviewMessageType('success');
@@ -213,7 +214,7 @@ export const ProjectEditor = () => {
 
     const projectPayload = {
       title,
-      slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      slug: (title || 'project').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       tagline,
       description,
       long_description: longDescription,
@@ -250,11 +251,6 @@ export const ProjectEditor = () => {
       setIsSaving(false);
     }
   };
-
-  // Filter categories by search
-  const filteredCategories = allCategories.filter((c) =>
-    c.name.toLowerCase().includes(categorySearch.toLowerCase())
-  );
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-16">
@@ -301,7 +297,7 @@ export const ProjectEditor = () => {
                 Project Website & Real Screenshot Preview
               </h3>
               <p className="text-slate-400 text-xs">
-                Enter the live client website URL. The engine will capture the actual rendered appearance of the website.
+                Enter the live client website URL. The engine captures the actual rendered appearance of the website.
               </p>
             </div>
 
@@ -349,7 +345,13 @@ export const ProjectEditor = () => {
                   className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 text-white text-xs font-bold shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isGeneratingPreview ? 'animate-spin' : ''}`} />
-                  <span>{isGeneratingPreview ? generatingStepText || 'Capturing Website...' : image ? '⚡ Regenerate Website Preview' : '⚡ Auto-Generate Website Preview'}</span>
+                  <span>
+                    {isGeneratingPreview
+                      ? generatingStepText || 'Capturing Website...'
+                      : image
+                      ? '⚡ Regenerate Website Preview'
+                      : '⚡ Auto-Generate Website Preview'}
+                  </span>
                 </button>
 
                 <label className="px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-semibold flex items-center gap-2 cursor-pointer transition-colors">
@@ -367,7 +369,7 @@ export const ProjectEditor = () => {
               {/* Status Notice */}
               {previewMessage && (
                 <div
-                  className={`p-3.5 rounded-2xl border text-xs font-medium leading-relaxed flex items-start gap-2.5 ${
+                  className={`p-3.5 rounded-2xl border text-xs font-medium leading-relaxed flex items-start justify-between gap-3 ${
                     previewMessageType === 'success'
                       ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
                       : previewMessageType === 'error'
@@ -375,12 +377,26 @@ export const ProjectEditor = () => {
                       : 'bg-slate-900/90 border-slate-800 text-slate-300'
                   }`}
                 >
-                  {previewMessageType === 'success' ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  ) : (
-                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-2.5">
+                    {previewMessageType === 'success' ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    ) : (
+                      <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                    )}
+                    <span>{previewMessage}</span>
+                  </div>
+
+                  {previewMessageType === 'error' && (
+                    <button
+                      type="button"
+                      onClick={handleGeneratePreview}
+                      disabled={isGeneratingPreview}
+                      className="px-3 py-1 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 text-[11px] font-bold shrink-0 flex items-center gap-1 cursor-pointer transition-colors"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      <span>Try Again</span>
+                    </button>
                   )}
-                  <span>{previewMessage}</span>
                 </div>
               )}
             </div>

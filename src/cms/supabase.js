@@ -1,7 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 
-const rawUrl = import.meta.env.VITE_SUPABASE_URL || 'https://npqfnzuyglgrzsetrbdo.supabase.co';
-const rawKey = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_KEY || '';
+const getEnvVar = (key) => {
+  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) {
+    return import.meta.env[key];
+  }
+  if (typeof process !== 'undefined' && process.env && process.env[key]) {
+    return process.env[key];
+  }
+  return '';
+};
+
+const rawUrl = getEnvVar('VITE_SUPABASE_URL') || 'https://npqfnzuyglgrzsetrbdo.supabase.co';
+const rawKey = getEnvVar('VITE_SUPABASE_ANON_KEY') || getEnvVar('VITE_SUPABASE_PUBLISHABLE_KEY') || getEnvVar('VITE_SUPABASE_KEY') || '';
 
 export const supabaseUrl = rawUrl.trim().replace(/^["']|["']$/g, '');
 export const supabaseAnonKey = rawKey.trim().replace(/^["']|["']$/g, '');
