@@ -52,7 +52,6 @@ export const CMSProvider = ({ children }) => {
       await seedInitialDataIfNeeded();
 
       if (isSupabaseConfigured() && supabase) {
-        // Fetch from Supabase
         const [
           { data: projData },
           { data: catData },
@@ -72,8 +71,8 @@ export const CMSProvider = ({ children }) => {
           supabase.from('testimonials').select('*').order('display_order', { ascending: true }),
           supabase.from('events').select('*').order('display_order', { ascending: true }),
           isAdmin ? supabase.from('inquiries').select('*').order('created_at', { ascending: false }) : Promise.resolve({ data: [] }),
-          supabase.from('contact_settings').select('*').limit(1).single(),
-          supabase.from('website_settings').select('*').limit(1).single(),
+          supabase.from('contact_settings').select('*').limit(1).maybeSingle(),
+          supabase.from('website_settings').select('*').limit(1).maybeSingle(),
           supabase.from('media_assets').select('*').order('created_at', { ascending: false }),
           isAdmin ? supabase.from('notifications').select('*').order('created_at', { ascending: false }) : Promise.resolve({ data: [] }),
           isAdmin ? supabase.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(50) : Promise.resolve({ data: [] }),
@@ -97,11 +96,37 @@ export const CMSProvider = ({ children }) => {
         if (inqData && inqData.length > 0) setInquiries(inqData);
         else setInquiries(await db.inquiries.orderBy('created_at').reverse().toArray());
 
+        const localContact = await db.contact_settings.get('default');
         if (contactData) setContactSettings(contactData);
-        else setContactSettings(await db.contact_settings.get('default'));
+        else if (localContact) setContactSettings(localContact);
+        else setContactSettings({
+          id: 'default',
+          email: 'hello@iwaat.com',
+          secondary_email: 'support@iwaat.com',
+          phone: '+1 (800) 492-2800',
+          secondary_phone: '+1 (800) 492-2801',
+          whatsapp: '+18004922800',
+          location: 'Global / Remote Digital Agency (US & India Hubs)',
+          working_hours: 'Mon - Sat: 9:00 AM - 8:00 PM EST (24/7 Support)',
+          address: '750 Lexington Ave, Suite 1400',
+          city: 'New York',
+          state: 'NY',
+          country: 'USA',
+          socials: { linkedin: 'https://linkedin.com/company/iwaat', twitter: 'https://twitter.com/iwaat', instagram: 'https://instagram.com/iwaat' }
+        });
 
+        const localSite = await db.website_settings.get('default');
         if (siteData) setWebsiteSettings(siteData);
-        else setWebsiteSettings(await db.website_settings.get('default'));
+        else if (localSite) setWebsiteSettings(localSite);
+        else setWebsiteSettings({
+          id: 'default',
+          site_name: 'iWAAT Agency',
+          tagline: 'Engineering High-Impact Digital Solutions & Scalable Web Applications',
+          description: 'Premier digital agency specializing in custom web platforms, e-commerce, cloud infrastructure, and enterprise digital solutions.',
+          primary_email: 'hello@iwaat.com',
+          hero_title: 'Engineering Digital Excellence for Modern Global Brands',
+          hero_subtitle: 'We architect bespoke digital products, responsive web apps, and secure high-performance platforms.'
+        });
 
         if (mediaData && mediaData.length > 0) setMediaAssets(mediaData);
         else setMediaAssets(await db.media_assets.toArray());
@@ -162,38 +187,111 @@ export const CMSProvider = ({ children }) => {
     refreshData();
   }, [refreshData]);
 
+  // Helper to sanitize project payload for Supabase & Dexie
+  const sanitizeProjectPayload = (data) => {
+    const title = data.title || 'Untitled Project';
+    const slug = data.slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `proj-${Date.now()}`;
+    const category = data.category || 'Healthcare';
+    const category_slug = data.category_slug || category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+    return {
+      id: data.id || `proj-${Date.now()}`,
+      title,
+      slug,
+      tagline: data.tagline || '',
+      description: data.description || '',
+      long_description: data.long_description || data.description || '',
+      category,
+      category_slug,
+      client_name: data.client_name || title.split(' ')[0] || 'Client',
+      url: data.url || '',
+      image: data.image || '',
+      preview_status: data.preview_status || 'ready',
+      preview_source: data.preview_source || 'auto',
+      preview_updated_at: data.preview_updated_at || new Date().toISOString(),
+      logo: data.logo || '',
+      featured: Boolean(data.featured),
+      status: data.status || 'published',
+      start_date: data.start_date || '',
+      completion_date: data.completion_date || '2026',
+      display_order: Number(data.display_order) || 0,
+      stats: Array.isArray(data.stats) ? data.stats : [],
+      technologies: Array.isArray(data.technologies) ? data.technologies : [],
+      highlights: Array.isArray(data.highlights) ? data.highlights : [],
+      challenge: data.challenge || '',
+      solution: data.solution || '',
+      results: data.results || '',
+      created_at: data.created_at || new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+  };
+
   // ==========================================
   // PROJECTS CRUD
   // ==========================================
   const addProject = async (projectData) => {
-    const newProject = {
-      ...projectData,
-      id: projectData.id || `proj-${Date.now()}`,
-      slug: projectData.slug || (projectData.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
+    const newProject = sanitizeProjectPayload(projectData);
 
     if (isSupabaseConfigured() && supabase) {
-      const { error } = await supabase.from('projects').insert([newProject]);
-      if (error) throw error;
+      try {
+        const { error } = await supabase.from('projects').insert([newProject]);
+        if (error) {
+          // If live database schema cache is missing preview columns, retry with core fields
+          if (
+            error.message?.includes('preview_source') ||
+            error.message?.includes('preview_status') ||
+            error.message?.includes('preview_updated_at') ||
+            error.code === 'PGRST204'
+          ) {
+            console.warn('[CMS Supabase] Column missing in schema cache, inserting core project payload...', error.message);
+            const { preview_source, preview_status, preview_updated_at, ...corePayload } = newProject;
+            const { error: coreErr } = await supabase.from('projects').insert([corePayload]);
+            if (coreErr) throw coreErr;
+          } else {
+            throw error;
+          }
+        }
+      } catch (insertErr) {
+        console.error('[CMS Supabase] Error adding project to Supabase:', insertErr);
+        throw insertErr;
+      }
     }
     await db.projects.put(newProject);
-    setProjects((prev) => [newProject, ...prev]);
+    setProjects((prev) => [newProject, ...prev.filter((p) => p.id !== newProject.id)]);
     await logAudit('CREATE', 'PROJECT', newProject.id, `Created project "${newProject.title}"`);
     return newProject;
   };
 
   const updateProject = async (id, projectData) => {
-    const updated = {
+    const updated = sanitizeProjectPayload({
       ...projectData,
       id,
       updated_at: new Date().toISOString(),
-    };
+    });
 
     if (isSupabaseConfigured() && supabase) {
-      const { error } = await supabase.from('projects').update(updated).eq('id', id);
-      if (error) throw error;
+      try {
+        const { error } = await supabase.from('projects').update(updated).eq('id', id);
+        if (error) {
+          // If live database schema cache is missing preview columns, retry with core fields
+          if (
+            error.message?.includes('preview_source') ||
+            error.message?.includes('preview_status') ||
+            error.message?.includes('preview_updated_at') ||
+            error.code === 'PGRST204'
+          ) {
+            console.warn('[CMS Supabase] Column missing in schema cache on update, updating core project payload...', error.message);
+            const { preview_source, preview_status, preview_updated_at, ...corePayload } = updated;
+            const { error: coreErr } = await supabase.from('projects').update(corePayload).eq('id', id);
+            if (coreErr) throw coreErr;
+          } else {
+            throw error;
+          }
+        }
+      } catch (updateErr) {
+        console.error('[CMS Supabase] Error updating project in Supabase:', updateErr);
+        throw updateErr;
+      }
     }
     await db.projects.put(updated);
     setProjects((prev) => prev.map((p) => (p.id === id ? updated : p)));
