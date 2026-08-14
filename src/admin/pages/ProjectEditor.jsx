@@ -122,19 +122,16 @@ export const ProjectEditor = () => {
     setIsGeneratingPreview(true);
     setPreviewMessageType('info');
     setGeneratingStepText('Capturing live website rendering...');
-    setPreviewMessage('');
-
     try {
-      const slug = (title || 'project').toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      const result = await generateWebsitePreview(normalized, slug);
+      const result = await generateWebsitePreview(normalized);
 
-      if (result.status === 'success' && result.previewUrl) {
+      if ((result.status === 'ready' || result.status === 'success') && result.previewUrl) {
         setImage(result.previewUrl);
         setPreviewStatus('ready');
-        setPreviewSource(result.provider || 'auto');
+        setPreviewSource(result.provider || 'microlink');
         setPreviewUpdatedAt(result.timestamp || new Date().toISOString());
         setPreviewMessageType('success');
-        setPreviewMessage(`✅ Real website screenshot captured via ${result.provider || 'live engine'}!`);
+        setPreviewMessage(`✅ Website screenshot preview ready via ${result.provider || 'CDN engine'}!`);
       } else {
         setPreviewMessageType('error');
         setPreviewMessage(
@@ -247,7 +244,7 @@ export const ProjectEditor = () => {
 
       // If project has a URL but no preview image, trigger asynchronous preview generation in background
       if (normalizedUrl && !image && savedProject?.id) {
-        generateWebsitePreview(normalizedUrl, savedProject.id, savedProject.slug)
+        generateWebsitePreview(normalizedUrl)
           .then((res) => {
             if (res.status === 'ready' && res.previewUrl) {
               updateProjectPreview(savedProject.id, {
