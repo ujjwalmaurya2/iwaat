@@ -3,6 +3,7 @@ import { db, seedInitialDataIfNeeded } from './dexieDb';
 import { supabase, isSupabaseConfigured, uploadToSupabaseStorage } from './supabase';
 import { optimizeImage } from './imageOptimizer';
 import { useAuth } from './authContext';
+import initialProjects from '../data/projects.json';
 
 const CMSContext = createContext(null);
 
@@ -78,8 +79,51 @@ export const CMSProvider = ({ children }) => {
           isAdmin ? supabase.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(50) : Promise.resolve({ data: [] }),
         ]);
 
-        if (projData && projData.length > 0) setProjects(projData);
-        else setProjects(await db.projects.toArray());
+        const dbLocalProjects = await db.projects.toArray();
+        const existingSupabaseProjects = projData || [];
+
+        // Build unified unique project list (Supabase projects + any missing static projects)
+        const existingIds = new Set(existingSupabaseProjects.map((p) => p.id));
+        const missingStaticProjects = dbLocalProjects.filter((p) => !existingIds.has(p.id));
+
+        // If admin is authenticated and there are missing static projects, sync them to Supabase
+        if (isAdmin && missingStaticProjects.length > 0 && isSupabaseConfigured() && supabase) {
+          try {
+            for (const missing of missingStaticProjects) {
+              const corePayload = {
+                id: missing.id,
+                title: missing.title,
+                slug: missing.slug,
+                category: missing.category,
+                category_slug: missing.category_slug,
+                url: missing.url || '',
+                tagline: missing.tagline || '',
+                description: missing.description || '',
+                long_description: missing.long_description || missing.description || '',
+                image: missing.image || '',
+                featured: Boolean(missing.featured),
+                status: missing.status || 'published',
+                completion_date: missing.completion_date || '2026',
+                display_order: missing.display_order || 0,
+                stats: Array.isArray(missing.stats) ? missing.stats : [],
+                technologies: Array.isArray(missing.technologies) ? missing.technologies : [],
+                highlights: Array.isArray(missing.highlights) ? missing.highlights : [],
+                client_name: missing.client_name || missing.title.split(' ')[0],
+                created_at: missing.created_at || new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+              };
+              await supabase.from('projects').upsert([corePayload], { onConflict: 'id' });
+            }
+          } catch (syncErr) {
+            console.warn('[CMS Supabase] Static projects auto-sync note:', syncErr.message);
+          }
+        }
+
+        const mergedProjects = [...existingSupabaseProjects, ...missingStaticProjects].sort(
+          (a, b) => (a.display_order || 0) - (b.display_order || 0)
+        );
+
+        setProjects(mergedProjects.length > 0 ? mergedProjects : dbLocalProjects);
 
         if (catData && catData.length > 0) setCategories(catData);
         else setCategories(await db.categories.toArray());

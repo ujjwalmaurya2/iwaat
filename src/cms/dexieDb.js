@@ -24,30 +24,37 @@ db.version(1).stores({
 // Initial seed function to migrate existing static content
 export async function seedInitialDataIfNeeded() {
   try {
-    const projectCount = await db.projects.count();
-    if (projectCount === 0) {
-      console.info('[iWAAT CMS] Seeding initial project data into local database...');
-      
-      // 1. Projects
-      const formattedProjects = initialProjects.map((p, idx) => ({
+    // 1. Projects - Ensure all standard static projects exist
+    const categoryMap = {
+      'Healthcare': 'Healthcare',
+      'NGO': 'NGO & Nonprofit',
+      'Photography': 'Photography',
+      'Retail': 'Retail',
+      'Fitness': 'Sports & Fitness',
+    };
+
+    const formattedProjects = initialProjects.map((p, idx) => {
+      const category = categoryMap[p.category] || p.category || 'Healthcare';
+      return {
         id: p.id || `proj-${idx + 1}`,
         title: p.title,
         slug: p.id,
-        category: p.category,
-        category_slug: p.categorySlug || p.category.toLowerCase().replace(/\s+/g, '-'),
+        category,
+        category_slug: category.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         url: p.url || '',
         tagline: p.tagline || '',
         description: p.description || '',
         long_description: p.longDescription || p.description || '',
         image: p.image,
         preview_status: 'ready',
+        preview_source: 'original',
         preview_updated_at: new Date().toISOString(),
         logo: '',
         featured: p.featured ?? true,
         status: 'published',
         start_date: '',
         completion_date: '2026',
-        display_order: idx,
+        display_order: idx + 1,
         stats: p.stats || [],
         technologies: p.technologies || [],
         highlights: p.highlights || [],
@@ -57,11 +64,19 @@ export async function seedInitialDataIfNeeded() {
         results: '',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
-      }));
-      await db.projects.bulkPut(formattedProjects);
+      };
+    });
 
-      // 2. Categories (39 Standard Industry Categories)
-      await db.categories.bulkPut(INDUSTRY_CATEGORIES);
+    // Check which projects are already in IndexedDB
+    for (const proj of formattedProjects) {
+      const exists = await db.projects.get(proj.id);
+      if (!exists) {
+        await db.projects.put(proj);
+      }
+    }
+
+    // 2. Categories (39 Standard Industry Categories)
+    await db.categories.bulkPut(INDUSTRY_CATEGORIES);
 
       // 3. Services
       const formattedServices = initialServices.map((s, idx) => ({
@@ -194,7 +209,6 @@ export async function seedInitialDataIfNeeded() {
       });
 
       console.info('[iWAAT CMS] Database successfully seeded with existing data.');
-    }
   } catch (error) {
     console.error('[iWAAT CMS] Seed error:', error);
   }
