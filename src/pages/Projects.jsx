@@ -11,10 +11,11 @@ export const Projects = () => {
 
   const publishedProjects = projects.filter((p) => p.status === 'published');
 
-  // Build category list dynamically from CMS
-  const categoriesList = ['All', ...dbCategories.map((c) => c.name)];
-  // Deduplicate categories
-  const categories = Array.from(new Set(categoriesList));
+  // Build category list dynamically: all unique categories from published projects, plus DB categories
+  const projectCatNames = publishedProjects.map((p) => p.category).filter(Boolean);
+  const dbCatNames = (dbCategories || []).map((c) => c.name).filter(Boolean);
+  const uniqueCategories = Array.from(new Set([...projectCatNames, ...dbCatNames.filter((name) => projectCatNames.includes(name))]));
+  const categories = ['All', ...(uniqueCategories.length > 0 ? uniqueCategories : ['Healthcare', 'Education', 'NGO & Nonprofit', 'E-Commerce'])];
 
   const filteredProjects =
     activeCategory === 'All'
@@ -22,7 +23,7 @@ export const Projects = () => {
       : publishedProjects.filter(
           (p) =>
             p.category?.toLowerCase() === activeCategory.toLowerCase() ||
-            p.category_slug === activeCategory.toLowerCase().replace(/\s+/g, '-') ||
+            p.category_slug === activeCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-') ||
             p.categorySlug === activeCategory.toLowerCase()
         );
 

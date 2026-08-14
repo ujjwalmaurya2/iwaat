@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -15,17 +15,41 @@ import {
   Layers,
   Star,
   Eye,
+  Search,
+  Clock,
+  ShieldCheck,
+  X,
 } from 'lucide-react';
 import { useCMS } from '../../cms/cmsContext';
 import { generateWebsitePreview, normalizeUrl } from '../../cms/previewService';
 import { optimizeImage } from '../../cms/imageOptimizer';
+import { INDUSTRY_CATEGORIES } from '../../data/industryCategories';
 
 export const ProjectEditor = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = Boolean(id);
 
-  const { projects, categories, addProject, updateProject } = useCMS();
+  const { projects, categories: dbCategories, addProject, updateProject } = useCMS();
+
+  // Combine static official 39 industry categories with any custom admin categories
+  const allCategories = useMemo(() => {
+    const map = new Map();
+    // 1. Preload 39 standard categories
+    INDUSTRY_CATEGORIES.forEach((c) => map.set(c.name.toLowerCase(), c));
+    // 2. Merge DB custom categories
+    (dbCategories || []).forEach((c) => {
+      if (!map.has(c.name.toLowerCase())) {
+        map.set(c.name.toLowerCase(), {
+          id: c.slug || c.id,
+          name: c.name,
+          slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+          display_order: c.display_order || 99,
+        });
+      }
+    });
+    return Array.from(map.values());
+  }, [dbCategories]);
 
   // Form State
   const [title, setTitle] = useState('');
@@ -33,10 +57,13 @@ export const ProjectEditor = () => {
   const [description, setDescription] = useState('');
   const [longDescription, setLongDescription] = useState('');
   const [category, setCategory] = useState('Healthcare');
+  const [categorySearch, setCategorySearch] = useState('');
   const [clientName, setClientName] = useState('');
   const [url, setUrl] = useState('');
   const [image, setImage] = useState('');
   const [previewStatus, setPreviewStatus] = useState('ready');
+  const [previewSource, setPreviewSource] = useState('none');
+  const [previewUpdatedAt, setPreviewUpdatedAt] = useState('');
   const [featured, setFeatured] = useState(true);
   const [status, setStatus] = useState('published');
   const [completionDate, setCompletionDate] = useState('2026');
@@ -51,7 +78,9 @@ export const ProjectEditor = () => {
 
   // UI state
   const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
+  const [generatingStepText, setGeneratingStepText] = useState('');
   const [previewMessage, setPreviewMessage] = useState('');
+  const [previewMessageType, setPreviewMessageType] = useState('info'); // 'success' | 'error' | 'info'
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -69,6 +98,8 @@ export const ProjectEditor = () => {
         setUrl(existing.url || '');
         setImage(existing.image || '');
         setPreviewStatus(existing.preview_status || 'ready');
+        setPreviewSource(existing.preview_source || (existing.image?.includes('microlink') ? 'microlink' : existing.image ? 'custom' : 'none'));
+        setPreviewUpdatedAt(existing.preview_updated_at || '');
         setFeatured(existing.featured ?? true);
         setStatus(existing.status || 'published');
         setCompletionDate(existing.completion_date || '2026');
@@ -83,27 +114,39 @@ export const ProjectEditor = () => {
 
   // Auto-generate live website screenshot from URL
   const handleGeneratePreview = async () => {
-    if (!url || url === '#') {
-      setPreviewMessage('Please enter a valid website URL first.');
+    const normalized = normalizeUrl(url);
+    if (!normalized || normalized === '#') {
+      setPreviewMessageType('error');
+      setPreviewMessage('Website URL is invalid. Please enter a valid address (e.g. https://example.com).');
       return;
     }
 
     setIsGeneratingPreview(true);
+    setPreviewMessageType('info');
+    setGeneratingStepText('Capturing live website rendering...');
     setPreviewMessage('');
 
     try {
-      const result = await generateWebsitePreview(url);
+      const result = await generateWebsitePreview(normalized);
       if (result.status === 'success' && result.previewUrl) {
         setImage(result.previewUrl);
         setPreviewStatus('generated');
-        setPreviewMessage('✅ Live website preview generated successfully!');
+        setPreviewSource(result.provider || 'auto');
+        setPreviewUpdatedAt(result.timestamp || new Date().toISOString());
+        setPreviewMessageType('success');
+        setPreviewMessage(`✅ Real website screenshot captured via ${result.provider || 'live engine'}!`);
       } else {
-        setPreviewMessage(`⚠️ ${result.message || 'Automatic preview unavailable. Please upload a custom screenshot.'}`);
+        setPreviewMessageType('error');
+        setPreviewMessage(
+          result.message || 'Unable to automatically capture this website. The website may block external screenshots. Please upload a screenshot manually.'
+        );
       }
     } catch (err) {
-      setPreviewMessage('⚠️ Automatic preview unavailable. Please upload a custom screenshot.');
+      setPreviewMessageType('error');
+      setPreviewMessage('Unable to automatically capture this website. Please upload a screenshot manually.');
     } finally {
       setIsGeneratingPreview(false);
+      setGeneratingStepText('');
     }
   };
 
@@ -116,10 +159,23 @@ export const ProjectEditor = () => {
       const optimizedWebP = await optimizeImage(file);
       setImage(optimizedWebP);
       setPreviewStatus('custom_upload');
+      setPreviewSource('manual');
+      setPreviewUpdatedAt(new Date().toISOString());
+      setPreviewMessageType('success');
       setPreviewMessage('✅ Custom screenshot uploaded and WebP-optimized!');
     } catch (err) {
-      setPreviewMessage('⚠️ Failed to optimize image. Please try again.');
+      setPreviewMessageType('error');
+      setPreviewMessage('Failed to optimize uploaded screenshot. Please try another image.');
     }
+  };
+
+  // Remove preview
+  const handleRemovePreview = () => {
+    setImage('');
+    setPreviewStatus('empty');
+    setPreviewSource('none');
+    setPreviewUpdatedAt('');
+    setPreviewMessage('');
   };
 
   // Add/Remove Stats row
@@ -153,6 +209,8 @@ export const ProjectEditor = () => {
       .map((h) => h.trim())
       .filter(Boolean);
 
+    const selectedCatObj = allCategories.find((c) => c.name.toLowerCase() === category.toLowerCase());
+
     const projectPayload = {
       title,
       slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
@@ -160,12 +218,13 @@ export const ProjectEditor = () => {
       description,
       long_description: longDescription,
       category,
-      category_slug: category.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      category_slug: selectedCatObj?.slug || category.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       client_name: clientName || title.split(' ')[0],
-      url: normalizeUrl(url),
-      image: image || 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=1200&auto=format&fit=crop',
+      url: normalizeUrl(url) || url,
+      image: image || '',
       preview_status: previewStatus,
-      preview_updated_at: new Date().toISOString(),
+      preview_source: previewSource,
+      preview_updated_at: previewUpdatedAt || new Date().toISOString(),
       featured,
       status,
       completion_date: completionDate,
@@ -183,7 +242,7 @@ export const ProjectEditor = () => {
       setSaveSuccess(true);
       setTimeout(() => {
         navigate('/super-admin/projects');
-      }, 1200);
+      }, 1000);
     } catch (err) {
       console.error('Failed to save project:', err);
       alert('Error saving project: ' + err.message);
@@ -191,6 +250,11 @@ export const ProjectEditor = () => {
       setIsSaving(false);
     }
   };
+
+  // Filter categories by search
+  const filteredCategories = allCategories.filter((c) =>
+    c.name.toLowerCase().includes(categorySearch.toLowerCase())
+  );
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-16">
@@ -225,30 +289,30 @@ export const ProjectEditor = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* SECTION 1: WEBSITE PREVIEW GENERATOR (CRITICAL REQUIREMENT) */}
+        {/* SECTION 1: REAL WEBSITE PREVIEW GENERATOR */}
         <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-violet-950/40 via-[#0B1020] to-slate-950 border border-violet-500/40 shadow-2xl space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-violet-500/20 text-violet-300 border border-violet-500/30 inline-flex items-center gap-1.5">
                 <Sparkles className="w-3 h-3" />
                 <span>Live Website Preview Engine</span>
               </span>
               <h3 className="font-heading font-extrabold text-xl text-white">
-                Project Website & Real Screenshot
+                Project Website & Real Screenshot Preview
               </h3>
               <p className="text-slate-400 text-xs">
-                Enter the live client website URL. The engine will capture the actual rendered site preview.
+                Enter the live client website URL. The engine will capture the actual rendered appearance of the website.
               </p>
             </div>
 
-            {url && url !== '#' && (
+            {url && normalizeUrl(url) && (
               <a
                 href={normalizeUrl(url)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-900 text-violet-400 hover:text-white border border-slate-800"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-900 text-violet-400 hover:text-white border border-slate-800 shrink-0"
               >
-                <span>Test Live Link</span>
+                <span>Visit Live Site</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
             )}
@@ -269,23 +333,23 @@ export const ProjectEditor = () => {
                     type="text"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
-                    placeholder="https://example-client-website.com"
+                    placeholder="https://client-portal.com or client-portal.com"
                     required
                     className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-violet-500 font-mono"
                   />
                 </div>
               </div>
 
-              {/* Action Buttons: Auto-generate & Manual Upload */}
+              {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <button
                   type="button"
                   onClick={handleGeneratePreview}
-                  disabled={isGeneratingPreview}
+                  disabled={isGeneratingPreview || !url}
                   className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 text-white text-xs font-bold shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isGeneratingPreview ? 'animate-spin' : ''}`} />
-                  <span>{isGeneratingPreview ? 'Capturing Screenshot...' : '⚡ Auto-Generate Website Preview'}</span>
+                  <span>{isGeneratingPreview ? generatingStepText || 'Capturing Website...' : image ? '⚡ Regenerate Website Preview' : '⚡ Auto-Generate Website Preview'}</span>
                 </button>
 
                 <label className="px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-semibold flex items-center gap-2 cursor-pointer transition-colors">
@@ -302,47 +366,90 @@ export const ProjectEditor = () => {
 
               {/* Status Notice */}
               {previewMessage && (
-                <p className="text-xs font-medium text-slate-300 p-3 rounded-2xl bg-slate-900/90 border border-slate-800 leading-relaxed">
-                  {previewMessage}
-                </p>
+                <div
+                  className={`p-3.5 rounded-2xl border text-xs font-medium leading-relaxed flex items-start gap-2.5 ${
+                    previewMessageType === 'success'
+                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                      : previewMessageType === 'error'
+                      ? 'bg-red-500/10 border-red-500/30 text-red-300'
+                      : 'bg-slate-900/90 border-slate-800 text-slate-300'
+                  }`}
+                >
+                  {previewMessageType === 'success' ? (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                  )}
+                  <span>{previewMessage}</span>
+                </div>
               )}
             </div>
 
             {/* Right Preview Card Box */}
-            <div className="lg:col-span-5">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
-                Preview Rendering
-              </label>
-              <div className="relative aspect-[16/10] rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden shadow-inner group">
+            <div className="lg:col-span-5 space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  Preview Rendering
+                </label>
+                {image && (
+                  <button
+                    type="button"
+                    onClick={handleRemovePreview}
+                    className="text-[11px] text-red-400 hover:text-red-300 flex items-center gap-1 cursor-pointer"
+                  >
+                    <X className="w-3 h-3" />
+                    <span>Remove</span>
+                  </button>
+                )}
+              </div>
+
+              <div className="relative aspect-[16/10] rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden shadow-inner group flex items-center justify-center">
                 {image ? (
                   <>
                     <img
                       src={image}
-                      alt="Project Preview"
+                      alt="Project Website Preview"
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                       <button
                         type="button"
                         onClick={handleGeneratePreview}
-                        className="px-3 py-1.5 rounded-full bg-violet-600 text-white text-[11px] font-bold"
+                        disabled={isGeneratingPreview}
+                        className="px-3.5 py-1.5 rounded-full bg-violet-600 text-white text-[11px] font-bold shadow hover:bg-violet-500 cursor-pointer"
                       >
-                        Regenerate
+                        Regenerate Preview
                       </button>
                     </div>
                   </>
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-slate-500 space-y-2">
-                    <Globe className="w-8 h-8 text-slate-600" />
+                  <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-slate-500 space-y-2 bg-slate-950/70">
+                    <Globe className="w-8 h-8 text-slate-700" />
                     <span className="text-xs">No screenshot generated yet</span>
+                    <span className="text-[10px] text-slate-600">Enter a website URL and click Auto-Generate</span>
                   </div>
                 )}
               </div>
+
+              {/* Metadata details */}
+              {image && (
+                <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-slate-400 flex items-center justify-between font-mono">
+                  <span>
+                    Source: <strong className="text-violet-300 uppercase">{previewSource}</strong>
+                  </span>
+                  {previewUpdatedAt && (
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-slate-500" />
+                      <span>{new Date(previewUpdatedAt).toLocaleDateString()}</span>
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* SECTION 2: BASIC INFORMATION */}
+        {/* SECTION 2: BASIC INFORMATION & INDUSTRY CATEGORY */}
         <div className="p-6 sm:p-8 rounded-3xl bg-[#0B1020]/90 border border-slate-800 space-y-6">
           <h3 className="font-heading font-extrabold text-lg text-white">
             Basic Project Details
@@ -378,18 +485,18 @@ export const ProjectEditor = () => {
               />
             </div>
 
-            {/* Category */}
+            {/* Industry Category (Expanded 39 Categories System) */}
             <div className="space-y-2">
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-                Industry Category <span className="text-violet-400">*</span>
+                Industry Category ({allCategories.length} Options) <span className="text-violet-400">*</span>
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-violet-500"
               >
-                {categories.map((c) => (
-                  <option key={c.id} value={c.name}>
+                {allCategories.map((c) => (
+                  <option key={c.id || c.slug} value={c.name}>
                     {c.name}
                   </option>
                 ))}
@@ -405,23 +512,148 @@ export const ProjectEditor = () => {
                 type="text"
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
-                placeholder="e.g. Apex Health Corp"
+                placeholder="e.g. Apex Health Systems"
                 className="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-violet-500"
               />
             </div>
 
-            {/* Status */}
+            {/* Short Description */}
+            <div className="space-y-2 sm:col-span-2">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                Summary Description <span className="text-violet-400">*</span>
+              </label>
+              <textarea
+                rows="3"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Brief high-level summary of the digital product..."
+                required
+                className="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-violet-500"
+              />
+            </div>
+
+            {/* Long Description / Case Study */}
+            <div className="space-y-2 sm:col-span-2">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                Full Case Study Details
+              </label>
+              <textarea
+                rows="5"
+                value={longDescription}
+                onChange={(e) => setLongDescription(e.target.value)}
+                placeholder="Comprehensive breakdown of client objectives, technical hurdles, architecture, and business outcomes..."
+                className="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-violet-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 3: TECHNICAL STACK & HIGHLIGHTS */}
+        <div className="p-6 sm:p-8 rounded-3xl bg-[#0B1020]/90 border border-slate-800 space-y-6">
+          <h3 className="font-heading font-extrabold text-lg text-white">
+            Engineering & Features
+          </h3>
+
+          <div className="space-y-6">
+            {/* Technologies Comma-separated */}
             <div className="space-y-2">
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-                Publish Status
+                Technologies Used (Comma-Separated)
+              </label>
+              <input
+                type="text"
+                value={technologiesText}
+                onChange={(e) => setTechnologiesText(e.target.value)}
+                placeholder="React 19, Tailwind CSS, Vite, Supabase, Framer Motion"
+                className="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-violet-500"
+              />
+            </div>
+
+            {/* Feature Highlights (1 per line) */}
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                Feature Highlights (One Per Line)
+              </label>
+              <textarea
+                rows="3"
+                value={highlightsText}
+                onChange={(e) => setHighlightsText(e.target.value)}
+                placeholder="Real-time patient telemetry\nAutomated invoice generation\nSub-second global load times"
+                className="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-violet-500"
+              />
+            </div>
+
+            {/* Key Metric Stats Builder */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                  Key Metrics / Numbers
+                </label>
+                <button
+                  type="button"
+                  onClick={addStatRow}
+                  className="px-3 py-1 rounded-xl bg-violet-600/20 text-violet-300 hover:bg-violet-600/40 text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Stat</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {stats.map((st, idx) => (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 flex items-center gap-3"
+                  >
+                    <input
+                      type="text"
+                      value={st.label}
+                      onChange={(e) => updateStatRow(idx, 'label', e.target.value)}
+                      placeholder="Metric Label (e.g. Uptime)"
+                      className="w-1/2 px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-violet-500"
+                    />
+                    <input
+                      type="text"
+                      value={st.value}
+                      onChange={(e) => updateStatRow(idx, 'value', e.target.value)}
+                      placeholder="Value (e.g. 99.9%)"
+                      className="w-1/2 px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 font-bold"
+                    />
+                    {stats.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeStatRow(idx)}
+                        className="p-2 text-slate-500 hover:text-red-400 transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 4: PUBLISHING CONTROLS */}
+        <div className="p-6 sm:p-8 rounded-3xl bg-[#0B1020]/90 border border-slate-800 space-y-6">
+          <h3 className="font-heading font-extrabold text-lg text-white">
+            Publishing Controls
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {/* Status (Published vs Draft) */}
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                Publishing Status
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-violet-500"
+                className="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-violet-500 font-semibold"
               >
-                <option value="published">Published (Visible on Public Website)</option>
-                <option value="draft">Draft (Hidden in Public)</option>
+                <option value="published">🚀 Published (Live on Website)</option>
+                <option value="draft">📝 Draft (Super Admin Only)</option>
               </select>
             </div>
 
@@ -430,151 +662,41 @@ export const ProjectEditor = () => {
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
                 Featured on Homepage
               </label>
-              <div className="flex items-center gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setFeatured(!featured)}
-                  className={`px-4 py-2 rounded-2xl text-xs font-semibold flex items-center gap-2 transition-colors ${
-                    featured
-                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                      : 'bg-slate-900 text-slate-500 border border-slate-800'
-                  }`}
-                >
-                  <Star className={`w-4 h-4 ${featured ? 'fill-amber-400 text-amber-400' : ''}`} />
-                  <span>{featured ? 'Featured on Home & Portfolio' : 'Standard Portfolio Item'}</span>
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => setFeatured(!featured)}
+                className={`w-full px-4 py-3 rounded-2xl border text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  featured
+                    ? 'bg-amber-500/10 border-amber-500/40 text-amber-300'
+                    : 'bg-slate-900 border-slate-800 text-slate-400'
+                }`}
+              >
+                <Star className={`w-4 h-4 ${featured ? 'fill-amber-400 text-amber-400' : ''}`} />
+                <span>{featured ? '★ Featured on Home' : 'Standard Portfolio'}</span>
+              </button>
             </div>
 
-            {/* Short Description */}
-            <div className="space-y-2 sm:col-span-2">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-                Short Overview Description <span className="text-violet-400">*</span>
-              </label>
-              <textarea
-                rows="3"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="2-3 sentences summarizing the product and impact..."
-                required
-                className="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-violet-500"
-              />
-            </div>
-
-            {/* Full Case Study Description */}
-            <div className="space-y-2 sm:col-span-2">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-                Full Case Study Story / Architecture Details
-              </label>
-              <textarea
-                rows="5"
-                value={longDescription}
-                onChange={(e) => setLongDescription(e.target.value)}
-                placeholder="In-depth details on how the system was engineered, challenges solved, and results..."
-                className="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-violet-500"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* SECTION 3: TECH STACK & HIGHLIGHTS */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-[#0B1020]/90 border border-slate-800 space-y-6">
-          <h3 className="font-heading font-extrabold text-lg text-white">
-            Technologies & Key Highlights
-          </h3>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* Year / Date */}
             <div className="space-y-2">
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-                Technologies (comma separated)
-              </label>
-              <input
-                type="text"
-                value={technologiesText}
-                onChange={(e) => setTechnologiesText(e.target.value)}
-                placeholder="React 19, Tailwind CSS, Vite, Supabase"
-                className="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-violet-500 font-mono"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-                Completion Year
+                Delivery Year
               </label>
               <input
                 type="text"
                 value={completionDate}
                 onChange={(e) => setCompletionDate(e.target.value)}
                 placeholder="2026"
-                className="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-violet-500"
-              />
-            </div>
-
-            <div className="space-y-2 sm:col-span-2">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-                Key Features / Deliverable Highlights (one per line)
-              </label>
-              <textarea
-                rows="4"
-                value={highlightsText}
-                onChange={(e) => setHighlightsText(e.target.value)}
-                placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
-                className="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-violet-500"
+                className="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-violet-500"
               />
             </div>
           </div>
         </div>
 
-        {/* SECTION 4: KEY STATS / METRICS */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-[#0B1020]/90 border border-slate-800 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-heading font-extrabold text-lg text-white">
-              Measurable Results & Stats
-            </h3>
-            <button
-              type="button"
-              onClick={addStatRow}
-              className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-semibold flex items-center gap-1"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Add Metric</span>
-            </button>
-          </div>
-
-          <div className="space-y-3">
-            {stats.map((st, idx) => (
-              <div key={idx} className="flex items-center gap-4">
-                <input
-                  type="text"
-                  value={st.label}
-                  onChange={(e) => updateStatRow(idx, 'label', e.target.value)}
-                  placeholder="Metric Label (e.g. Load Speed)"
-                  className="flex-1 px-4 py-2.5 rounded-2xl bg-slate-900 border border-slate-800 text-white text-xs"
-                />
-                <input
-                  type="text"
-                  value={st.value}
-                  onChange={(e) => updateStatRow(idx, 'value', e.target.value)}
-                  placeholder="Value (e.g. 0.4s or +120%)"
-                  className="w-36 px-4 py-2.5 rounded-2xl bg-slate-900 border border-slate-800 text-white text-xs font-bold"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeStatRow(idx)}
-                  className="p-2.5 rounded-2xl bg-slate-900 border border-slate-800 text-slate-500 hover:text-red-400 transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Bottom Action Submit */}
-        <div className="flex items-center justify-end gap-4 pt-4">
+        {/* Bottom Save Action */}
+        <div className="flex items-center justify-end gap-4 pt-4 border-t border-slate-800">
           <Link
             to="/super-admin/projects"
-            className="px-6 py-3 rounded-full text-xs font-semibold text-slate-400 hover:text-white bg-slate-900 border border-slate-800"
+            className="px-6 py-3 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-colors"
           >
             Cancel
           </Link>
@@ -585,7 +707,7 @@ export const ProjectEditor = () => {
             className="px-8 py-3.5 rounded-full text-sm font-bold bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 text-white shadow-xl shadow-violet-500/25 hover:shadow-violet-500/40 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
-            <span>{isSaving ? 'Saving Project...' : isEditing ? 'Save Changes' : 'Publish to Website'}</span>
+            <span>{isSaving ? 'Saving...' : isEditing ? 'Save Changes' : 'Publish to Portfolio'}</span>
           </button>
         </div>
       </form>

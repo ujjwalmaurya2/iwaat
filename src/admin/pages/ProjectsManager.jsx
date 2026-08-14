@@ -16,14 +16,31 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { useCMS } from '../../cms/cmsContext';
+import { INDUSTRY_CATEGORIES } from '../../data/industryCategories';
 
 export const ProjectsManager = () => {
-  const { projects, categories, deleteProject, toggleProjectPublish, toggleProjectFeatured } = useCMS();
+  const { projects, categories: dbCategories, deleteProject, toggleProjectPublish, toggleProjectFeatured } = useCMS();
 
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [projectToDelete, setProjectToDelete] = useState(null);
+
+  // Combine standard 39 categories with DB categories
+  const allCategoryOptions = React.useMemo(() => {
+    const map = new Map();
+    INDUSTRY_CATEGORIES.forEach((c) => map.set(c.name.toLowerCase(), c));
+    (dbCategories || []).forEach((c) => {
+      if (!map.has(c.name.toLowerCase())) {
+        map.set(c.name.toLowerCase(), {
+          id: c.slug || c.id,
+          name: c.name,
+          slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        });
+      }
+    });
+    return Array.from(map.values());
+  }, [dbCategories]);
 
   const filteredProjects = projects.filter((p) => {
     const matchesSearch =
@@ -33,8 +50,8 @@ export const ProjectsManager = () => {
 
     const matchesCategory =
       selectedCategory === 'All' ||
-      p.category.toLowerCase() === selectedCategory.toLowerCase() ||
-      p.category_slug === selectedCategory.toLowerCase();
+      p.category?.toLowerCase() === selectedCategory.toLowerCase() ||
+      p.category_slug === selectedCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
     const matchesStatus =
       selectedStatus === 'All' || p.status === selectedStatus;
@@ -93,8 +110,8 @@ export const ProjectsManager = () => {
               className="px-3 py-2 rounded-2xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-violet-500"
             >
               <option value="All">All Categories</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.slug}>
+              {allCategoryOptions.map((c) => (
+                <option key={c.id || c.slug} value={c.name}>
                   {c.name}
                 </option>
               ))}

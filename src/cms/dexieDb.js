@@ -3,6 +3,7 @@ import initialProjects from '../data/projects.json';
 import initialServices from '../data/services.json';
 import initialTestimonials from '../data/testimonials.json';
 import initialCompany from '../data/company.json';
+import { INDUSTRY_CATEGORIES } from '../data/industryCategories';
 
 export const db = new Dexie('iwaat_cms_db');
 
@@ -59,20 +60,8 @@ export async function seedInitialDataIfNeeded() {
       }));
       await db.projects.bulkPut(formattedProjects);
 
-      // 2. Categories
-      const categoriesMap = new Map();
-      initialProjects.forEach((p) => {
-        const slug = p.categorySlug || p.category.toLowerCase().replace(/\s+/g, '-');
-        if (!categoriesMap.has(slug)) {
-          categoriesMap.set(slug, {
-            id: slug,
-            name: p.category,
-            slug: slug,
-            display_order: categoriesMap.size
-          });
-        }
-      });
-      await db.categories.bulkAdd(Array.from(categoriesMap.values()));
+      // 2. Categories (39 Standard Industry Categories)
+      await db.categories.bulkPut(INDUSTRY_CATEGORIES);
 
       // 3. Services
       const formattedServices = initialServices.map((s, idx) => ({

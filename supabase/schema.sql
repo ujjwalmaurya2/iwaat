@@ -374,6 +374,52 @@ ON CONFLICT (email) DO UPDATE
 SET role = 'super_admin', status = 'active';
 
 -- =================================================================
+-- 39 STANDARD INDUSTRY CATEGORIES SEED
+-- =================================================================
+INSERT INTO public.categories (name, slug, display_order)
+VALUES
+  ('Healthcare', 'healthcare', 1),
+  ('Hospitals', 'hospitals', 2),
+  ('Pathology & Diagnostic Labs', 'pathology-diagnostic-labs', 3),
+  ('Clinics', 'clinics', 4),
+  ('Dental Clinics', 'dental-clinics', 5),
+  ('Education', 'education', 6),
+  ('Schools', 'schools', 7),
+  ('Colleges & Universities', 'colleges-universities', 8),
+  ('Coaching & Training', 'coaching-training', 9),
+  ('NGO & Nonprofit', 'ngo-nonprofit', 10),
+  ('Government', 'government', 11),
+  ('Government Departments', 'government-departments', 12),
+  ('E-Commerce', 'ecommerce', 13),
+  ('Retail', 'retail', 14),
+  ('Restaurants & Food', 'restaurants-food', 15),
+  ('Hotels & Hospitality', 'hotels-hospitality', 16),
+  ('Real Estate', 'real-estate', 17),
+  ('Construction', 'construction', 18),
+  ('Architecture & Interior Design', 'architecture-interior', 19),
+  ('Finance & Accounting', 'finance-accounting', 20),
+  ('Banking & FinTech', 'banking-fintech', 21),
+  ('Legal & Law Firms', 'legal-law-firms', 22),
+  ('IT & Software', 'it-software', 23),
+  ('SaaS', 'saas', 24),
+  ('Digital Marketing', 'digital-marketing', 25),
+  ('Manufacturing', 'manufacturing', 26),
+  ('Automobile', 'automobile', 27),
+  ('Travel & Tourism', 'travel-tourism', 28),
+  ('Events & Wedding', 'events-wedding', 29),
+  ('Media & Entertainment', 'media-entertainment', 30),
+  ('Photography', 'photography', 31),
+  ('Printing & Publishing', 'printing-publishing', 32),
+  ('Professional Services', 'professional-services', 33),
+  ('Personal Portfolio', 'personal-portfolio', 34),
+  ('Religious & Spiritual Organizations', 'religious-spiritual', 35),
+  ('Community Organizations', 'community-organizations', 36),
+  ('Sports & Fitness', 'sports-fitness', 37),
+  ('Beauty & Wellness', 'beauty-wellness', 38),
+  ('Other', 'other', 39)
+ON CONFLICT (slug) DO NOTHING;
+
+-- =================================================================
 -- STORAGE BUCKETS CONFIGURATION
 -- =================================================================
 INSERT INTO storage.buckets (id, name, public) 
