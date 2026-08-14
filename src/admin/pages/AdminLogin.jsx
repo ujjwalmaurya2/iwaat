@@ -135,8 +135,8 @@ export const AdminLogin = () => {
             </button>
           </form>
 
-          {/* Quick Demo Helper */}
-          {!isSupabase && (
+          {/* Quick Demo Helper (Development Only) */}
+          {!isSupabase && import.meta.env.DEV && (
             <div className="p-3.5 rounded-2xl bg-violet-950/30 border border-violet-800/40 text-xs text-slate-300 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-violet-300 flex items-center gap-1.5">

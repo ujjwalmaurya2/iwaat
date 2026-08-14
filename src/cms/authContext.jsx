@@ -110,8 +110,11 @@ export const AuthProvider = ({ children }) => {
         setIsAdmin(true);
         return { success: true, user: data.user };
       } else {
-        // Local Fallback Admin Mode
-        // Default Super Admin credentials for testing when Supabase keys are not set
+        // Development-Only Fallback Admin Mode (strictly disabled in production)
+        if (!import.meta.env.DEV) {
+          throw new Error('Production authentication requires valid Supabase Auth credentials.');
+        }
+
         const validEmail = email.trim().toLowerCase();
         if (
           (validEmail === 'admin@iwaat.com' || validEmail === 'superadmin@iwaat.com' || validEmail === 'ujjwalmaurya2@gmail.com') &&
