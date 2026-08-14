@@ -280,9 +280,9 @@ ALTER TABLE public.media_assets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
 
--- 1. admin_users (Admins can view active team; only Super Admin can edit/invite)
+-- 1. admin_users (Admins can view active team; user can always view own record by ID or email)
 CREATE POLICY "Admins can view admin_users" ON public.admin_users
-  FOR SELECT USING (auth.uid() = auth_user_id OR public.is_admin());
+  FOR SELECT USING (auth.uid() = auth_user_id OR email = (auth.jwt() ->> 'email') OR public.is_admin());
 
 CREATE POLICY "Super Admins can manage admin_users" ON public.admin_users
   FOR ALL USING (public.is_super_admin());

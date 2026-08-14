@@ -14,18 +14,34 @@ export const AuthProvider = ({ children }) => {
   const verifyAdminInDb = async (authUser) => {
     if (!authUser || !supabase) return null;
     try {
-      // Check admin_users table by auth_user_id or email
+      // 1. Check admin_users table by auth_user_id OR email
       const { data, error } = await supabase
         .from('admin_users')
         .select('*')
         .or(`auth_user_id.eq.${authUser.id},email.eq.${authUser.email}`)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') {
-        console.warn('[Auth] Error querying admin_users:', error.message);
+      if (error) {
+        console.warn('[Auth] Note querying admin_users:', error.message);
       }
 
       if (data && data.status === 'active') {
+        // Link auth_user_id if it was not linked yet
+        if (!data.auth_user_id || data.auth_user_id !== authUser.id) {
+          try {
+            await supabase
+              .from('admin_users')
+              .update({
+                auth_user_id: authUser.id,
+                last_login_at: new Date().toISOString(),
+                avatar_url: authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture || data.avatar_url,
+                full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || data.full_name,
+              })
+              .eq('email', authUser.email);
+          } catch (updateErr) {
+            // Ignored if RLS update policy restricts non-superadmin
+          }
+        }
         return data;
       }
       return null;
@@ -56,7 +72,7 @@ export const AuthProvider = ({ children }) => {
             setIsAdmin(false);
           }
 
-          // Listen for Supabase auth state transitions (OAuth redirects)
+          // 2. Listen for Supabase auth state transitions (OAuth redirects / callbacks)
           const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
             if (!isMounted) return;
             if (session?.user) {
@@ -65,11 +81,13 @@ export const AuthProvider = ({ children }) => {
               if (isMounted) {
                 setAdminProfile(profile);
                 setIsAdmin(Boolean(profile && profile.status === 'active'));
+                setLoading(false);
               }
             } else {
               setUser(null);
               setAdminProfile(null);
               setIsAdmin(false);
+              setLoading(false);
             }
           });
 
@@ -77,7 +95,7 @@ export const AuthProvider = ({ children }) => {
             authListener?.subscription?.unsubscribe();
           };
         } else {
-          // 2. Development offline test mode (strictly disabled in production)
+          // 3. Development offline test mode (strictly disabled in production)
           if (import.meta.env.DEV) {
             const storedLocalSession = localStorage.getItem('iwaat_admin_session');
             if (storedLocalSession && isMounted) {
@@ -129,7 +147,7 @@ export const AuthProvider = ({ children }) => {
       } else {
         // If Supabase credentials are not yet configured
         throw new Error(
-          'Supabase project credentials not configured. Please supply VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
+          'Supabase credentials not configured in .env.local. Please ensure VITE_SUPABASE_ANON_KEY is set.'
         );
       }
     } catch (err) {
