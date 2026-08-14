@@ -369,8 +369,7 @@ CREATE POLICY "Admins can view and create audit logs" ON public.audit_logs
 -- =================================================================
 INSERT INTO public.admin_users (email, full_name, role, status)
 VALUES 
-  ('ujjwalmaurya2@gmail.com', 'Ujjwal Maurya', 'super_admin', 'active'),
-  ('admin@iwaat.com', 'iWAAT Super Admin', 'super_admin', 'active')
+  ('ujjwalmaurya2@gmail.com', 'Ujjwal Maurya', 'super_admin', 'active')
 ON CONFLICT (email) DO UPDATE 
 SET role = 'super_admin', status = 'active';
 
