@@ -2,27 +2,27 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SectionHeader } from '../components/SectionHeader';
 import { ProjectCard } from '../components/ProjectCard';
-import projectsData from '../data/projects.json';
+import { useCMS } from '../cms/cmsContext';
 import { Sparkles } from 'lucide-react';
 
-const categories = [
-  'All',
-  'Healthcare',
-  'NGO',
-  'Photography',
-  'Retail',
-  'Fitness',
-];
-
 export const Projects = () => {
+  const { projects, categories: dbCategories } = useCMS();
   const [activeCategory, setActiveCategory] = useState('All');
+
+  const publishedProjects = projects.filter((p) => p.status === 'published');
+
+  // Build category list dynamically from CMS
+  const categoriesList = ['All', ...dbCategories.map((c) => c.name)];
+  // Deduplicate categories
+  const categories = Array.from(new Set(categoriesList));
 
   const filteredProjects =
     activeCategory === 'All'
-      ? projectsData
-      : projectsData.filter(
+      ? publishedProjects
+      : publishedProjects.filter(
           (p) =>
-            p.category.toLowerCase() === activeCategory.toLowerCase() ||
+            p.category?.toLowerCase() === activeCategory.toLowerCase() ||
+            p.category_slug === activeCategory.toLowerCase().replace(/\s+/g, '-') ||
             p.categorySlug === activeCategory.toLowerCase()
         );
 

@@ -3,9 +3,17 @@ import { SectionHeader } from '../components/SectionHeader';
 import { ContactForm } from '../components/ContactForm';
 import { FAQAccordion } from '../components/FAQAccordion';
 import { Mail, Phone, MapPin, Clock, MessageSquare } from 'lucide-react';
-import companyData from '../data/company.json';
+import { useCMS } from '../cms/cmsContext';
+import fallbackCompany from '../data/company.json';
 
 export const Contact = () => {
+  const { contactSettings } = useCMS();
+
+  const email = contactSettings?.email || fallbackCompany.contactInfo.email;
+  const phone = contactSettings?.phone || fallbackCompany.contactInfo.phone;
+  const location = contactSettings?.location || fallbackCompany.contactInfo.location;
+  const workingHours = contactSettings?.working_hours || fallbackCompany.contactInfo.workingHours;
+
   return (
     <div className="pt-28 pb-20 space-y-24">
       {/* Header */}
@@ -42,10 +50,10 @@ export const Contact = () => {
                     Email Address
                   </span>
                   <a
-                    href="mailto:hello@iwaat.com"
+                    href={`mailto:${email}`}
                     className="font-heading font-bold text-slate-900 dark:text-white text-lg hover:text-violet-500 transition-colors"
                   >
-                    hello@iwaat.com
+                    {email}
                   </a>
                 </div>
               </div>
@@ -59,10 +67,10 @@ export const Contact = () => {
                     Phone & WhatsApp Direct Line
                   </span>
                   <a
-                    href="tel:+18004922800"
+                    href={`tel:${phone.replace(/[^0-9+]/g, '')}`}
                     className="font-heading font-bold text-slate-900 dark:text-white text-lg hover:text-violet-500 transition-colors"
                   >
-                    +1 (800) 492-2800
+                    {phone}
                   </a>
                 </div>
               </div>
@@ -76,7 +84,7 @@ export const Contact = () => {
                     Global Office Presence
                   </span>
                   <p className="font-heading font-bold text-slate-900 dark:text-white text-base">
-                    Global / Remote Digital Agency (US & India Hubs)
+                    {location}
                   </p>
                 </div>
               </div>
@@ -90,7 +98,7 @@ export const Contact = () => {
                     Working Hours
                   </span>
                   <p className="font-heading font-bold text-slate-900 dark:text-white text-base">
-                    Mon – Sat: 9:00 AM – 8:00 PM EST (24/7 Support)
+                    {workingHours}
                   </p>
                 </div>
               </div>

@@ -3,9 +3,12 @@ import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { Send, CheckCircle2, Sparkles, MessageSquare } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { useCMS } from '../cms/cmsContext';
 
 export const ContactForm = () => {
   const [submitted, setSubmitted] = useState(false);
+  const { submitInquiry } = useCMS();
+
   const {
     register,
     handleSubmit,
@@ -13,16 +16,32 @@ export const ContactForm = () => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const onSubmit = (data) => {
-    // Fire celebratory confetti!
-    confetti({
-      particleCount: 120,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
-    setSubmitted(true);
-    reset();
-    setTimeout(() => setSubmitted(false), 8000);
+  const onSubmit = async (data) => {
+    try {
+      await submitInquiry({
+        name: data.name,
+        email: data.email,
+        phone: data.phone || '',
+        company: data.company || '',
+        service: data.service,
+        budget: data.budget || '$2,000 – $5,000',
+        description: data.description,
+      });
+
+      // Fire celebratory confetti!
+      confetti({
+        particleCount: 120,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
+
+      setSubmitted(true);
+      reset();
+      setTimeout(() => setSubmitted(false), 8000);
+    } catch (err) {
+      console.error('Error submitting inquiry:', err);
+      alert('Error submitting inquiry: ' + err.message);
+    }
   };
 
   return (
@@ -40,7 +59,7 @@ export const ContactForm = () => {
             Project Proposal Received!
           </h3>
           <p className="text-slate-600 dark:text-slate-300 text-sm max-w-md mx-auto leading-relaxed">
-            Thank you for reaching out to <span className="font-bold text-violet-500">iWAAt</span>. Our senior technical team is reviewing your project details and will reply within 24 hours.
+            Thank you for reaching out to <span className="font-bold text-violet-500">iWAAt</span>. Our senior technical team has received your project details and will reply within 24 hours.
           </p>
           <button
             onClick={() => setSubmitted(false)}
@@ -141,12 +160,12 @@ export const ContactForm = () => {
                 className="w-full px-4 py-3 rounded-2xl bg-slate-100/80 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-violet-500 transition-colors"
               >
                 <option value="">Select Primary Service...</option>
-                <option value="web-development">Web Development (React / Next.js)</option>
-                <option value="software-development">Custom Software & CRM/ERP</option>
-                <option value="ui-ux-design">UI/UX Design & Prototyping</option>
-                <option value="digital-marketing">Digital Marketing & SEO</option>
-                <option value="branding">Branding & Visual Identity</option>
-                <option value="maintenance">Maintenance & Support</option>
+                <option value="Web Development">Web Development (React / Next.js)</option>
+                <option value="Software Development">Custom Software & CRM/ERP</option>
+                <option value="UI/UX Design">UI/UX Design & Prototyping</option>
+                <option value="Digital Marketing">Digital Marketing & SEO</option>
+                <option value="Branding & Identity">Branding & Visual Identity</option>
+                <option value="Maintenance & Support">Maintenance & Support</option>
               </select>
               {errors.service && (
                 <span className="text-xs text-red-500 mt-1 block">{errors.service.message}</span>
@@ -162,10 +181,10 @@ export const ContactForm = () => {
                 {...register('budget')}
                 className="w-full px-4 py-3 rounded-2xl bg-slate-100/80 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-violet-500 transition-colors"
               >
-                <option value="5k-10k">$2,000 – $5,000</option>
-                <option value="10k-25k">$5,000 – $10,000</option>
-                <option value="25k-50k">$10,000 – $25,000</option>
-                <option value="50k+">$25,000+</option>
+                <option value="$2,000 – $5,000">$2,000 – $5,000</option>
+                <option value="$5,000 – $10,000">$5,000 – $10,000</option>
+                <option value="$10,000 – $25,000">$10,000 – $25,000</option>
+                <option value="$25,000+">$25,000+</option>
               </select>
             </div>
           </div>
@@ -194,9 +213,9 @@ export const ContactForm = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-4 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-orange-500 text-white font-bold text-base shadow-xl shadow-violet-500/25 hover:shadow-violet-500/40 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+            className="w-full py-4 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-orange-500 text-white font-bold text-base shadow-xl shadow-violet-500/25 hover:shadow-violet-500/40 transition-all flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50"
           >
-            <span>Send Project Proposal</span>
+            <span>{isSubmitting ? 'Sending Proposal...' : 'Send Project Proposal'}</span>
             <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
         </form>

@@ -5,14 +5,18 @@ import { Menu, X, ArrowUpRight, Sparkles } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { useScrollPosition } from '../hooks/useScrollPosition';
 
+import { useCMS } from '../cms/cmsContext';
+
 const navItems = [
   { label: 'Home', path: '/' },
   { label: 'Services', path: '/services' },
   { label: 'Projects', path: '/projects' },
   { label: 'About', path: '/about' },
   { label: 'Process', path: '/process' },
+  { label: 'Events', path: '/events' },
   { label: 'Contact', path: '/contact' },
 ];
+
 
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

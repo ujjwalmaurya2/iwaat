@@ -20,18 +20,27 @@ import { SectionHeader } from '../components/SectionHeader';
 import { ServiceCard } from '../components/ServiceCard';
 import { ProjectCard } from '../components/ProjectCard';
 import { TechBadge } from '../components/TechBadge';
-import { TestimonialCard } from '../components/TestimonialCard';
 import { TestimonialMarquee } from '../components/TestimonialMarquee';
 import { ContactForm } from '../components/ContactForm';
 import { MagneticButton } from '../components/MagneticButton';
+import { useCMS } from '../cms/cmsContext';
 
-import servicesData from '../data/services.json';
-import projectsData from '../data/projects.json';
-import technologiesData from '../data/technologies.json';
-import companyData from '../data/company.json';
-import testimonialsData from '../data/testimonials.json';
+import fallbackTechnologies from '../data/technologies.json';
+import fallbackCompany from '../data/company.json';
 
 export const Home = () => {
+  const { projects, services, contactSettings, websiteSettings } = useCMS();
+
+  // Published & featured projects
+  const publishedFeaturedProjects = projects
+    .filter((p) => p.status === 'published' && p.featured)
+    .slice(0, 6);
+
+  const contactEmail = contactSettings?.email || fallbackCompany.contactInfo.email;
+  const contactPhone = contactSettings?.phone || fallbackCompany.contactInfo.phone;
+  const contactLocation = contactSettings?.location || fallbackCompany.contactInfo.location;
+  const contactHours = contactSettings?.working_hours || fallbackCompany.contactInfo.workingHours;
+
   return (
     <div className="space-y-24 md:space-y-32 pb-16">
       {/* HERO SECTION */}
@@ -47,7 +56,7 @@ export const Home = () => {
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 dark:bg-violet-500/15 border border-violet-500/30 text-violet-600 dark:text-violet-300 text-xs sm:text-sm font-semibold shadow-sm"
               >
                 <Sparkles className="w-4 h-4 text-violet-500 animate-spin" />
-                <span>We Build • We Scale • We Market</span>
+                <span>{websiteSettings?.tagline || 'We Build • We Scale • We Market'}</span>
               </motion.div>
 
               <motion.h1
@@ -69,7 +78,8 @@ export const Home = () => {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-slate-600 dark:text-slate-300 text-base sm:text-xl font-normal leading-relaxed max-w-2xl mx-auto lg:mx-0"
               >
-                We design, develop, and market modern digital products—from websites and software platforms to branding, SEO, and growth solutions for startups, NGOs, healthcare, fitness, and commerce.
+                {websiteSettings?.short_description ||
+                  'We design, develop, and market modern digital products—from websites and software platforms to branding, SEO, and growth solutions for startups, NGOs, healthcare, fitness, and commerce.'}
               </motion.p>
 
               {/* Action Buttons */}
@@ -145,7 +155,7 @@ export const Home = () => {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {servicesData.map((service, index) => (
+          {services.map((service, index) => (
             <ServiceCard key={service.id} service={service} index={index} />
           ))}
         </div>
@@ -161,7 +171,7 @@ export const Home = () => {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {projectsData.map((project, index) => (
+          {publishedFeaturedProjects.map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} />
           ))}
         </div>
@@ -186,33 +196,30 @@ export const Home = () => {
         />
 
         <div className="space-y-12">
-          {/* Frontend Category */}
           <div>
             <h3 className="font-heading font-bold text-lg text-slate-900 dark:text-white mb-6 flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
               <span className="w-2.5 h-2.5 rounded-full bg-violet-500" />
               Frontend & UI Performance
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-              {technologiesData.frontend.map((tech, idx) => (
+              {fallbackTechnologies.frontend.map((tech, idx) => (
                 <TechBadge key={idx} tech={tech} index={idx} />
               ))}
             </div>
           </div>
 
-          {/* Backend Category */}
           <div>
             <h3 className="font-heading font-bold text-lg text-slate-900 dark:text-white mb-6 flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
               <span className="w-2.5 h-2.5 rounded-full bg-cyan-400" />
               Backend Architecture & Cloud DB
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-              {technologiesData.backend.map((tech, idx) => (
+              {fallbackTechnologies.backend.map((tech, idx) => (
                 <TechBadge key={idx} tech={tech} index={idx} />
               ))}
             </div>
           </div>
 
-          {/* Tools & Marketing */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
               <h3 className="font-heading font-bold text-lg text-slate-900 dark:text-white mb-6 flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
@@ -220,7 +227,7 @@ export const Home = () => {
                 Development & DevOps Tools
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {technologiesData.tools.map((tech, idx) => (
+                {fallbackTechnologies.tools.map((tech, idx) => (
                   <TechBadge key={idx} tech={tech} index={idx} />
                 ))}
               </div>
@@ -232,7 +239,7 @@ export const Home = () => {
                 Growth & SEO Analytics
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {technologiesData.marketing.map((tech, idx) => (
+                {fallbackTechnologies.marketing.map((tech, idx) => (
                   <TechBadge key={idx} tech={tech} index={idx} />
                 ))}
               </div>
@@ -251,7 +258,7 @@ export const Home = () => {
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-          {companyData.whyChooseUs.map((feature, idx) => (
+          {fallbackCompany.whyChooseUs.map((feature, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
@@ -285,15 +292,12 @@ export const Home = () => {
             subtitle="Explore authentic feedback from leaders across healthcare, NGOs, photography, luxury retail, and fitness. Hover over any quote to pause."
           />
         </div>
-
-        {/* Dual Moving Marquee Tracks (Row 1 Left, Row 2 Right) */}
         <TestimonialMarquee />
       </section>
 
       {/* LARGE CTA BANNER */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative rounded-[36px] overflow-hidden p-10 sm:p-16 text-center bg-gradient-to-r from-violet-900 via-indigo-900 to-slate-950 border border-violet-500/30 shadow-2xl">
-          {/* Animated Background Mesh */}
           <div className="absolute inset-0 bg-dot-pattern opacity-20 pointer-events-none" />
           <div className="absolute -top-32 -left-32 w-96 h-96 bg-violet-500/30 rounded-full blur-[100px] pointer-events-none" />
           <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-orange-500/20 rounded-full blur-[100px] pointer-events-none" />
@@ -311,7 +315,7 @@ export const Home = () => {
             </h2>
 
             <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
-              Whether you need a website, software platform, branding, or digital marketing, iWAAt is ready to help your business scale.
+              Whether you need a website, software platform, branding, or digital marketing, {websiteSettings?.name || 'iWAAt'} is ready to help your business scale.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
@@ -363,10 +367,10 @@ export const Home = () => {
                     Direct Email
                   </span>
                   <a
-                    href="mailto:hello@iwaat.com"
+                    href={`mailto:${contactEmail}`}
                     className="font-heading font-bold text-slate-900 dark:text-white hover:text-violet-500 transition-colors text-base"
                   >
-                    hello@iwaat.com
+                    {contactEmail}
                   </a>
                 </div>
               </div>
@@ -380,10 +384,10 @@ export const Home = () => {
                     Phone & WhatsApp
                   </span>
                   <a
-                    href="tel:+18004922800"
+                    href={`tel:${contactPhone.replace(/[^0-9+]/g, '')}`}
                     className="font-heading font-bold text-slate-900 dark:text-white hover:text-violet-500 transition-colors text-base"
                   >
-                    +1 (800) 492-2800
+                    {contactPhone}
                   </a>
                 </div>
               </div>
@@ -397,7 +401,7 @@ export const Home = () => {
                     Location & Hubs
                   </span>
                   <p className="font-heading font-bold text-slate-900 dark:text-white text-base">
-                    Global / Remote Digital Agency
+                    {contactLocation}
                   </p>
                 </div>
               </div>
@@ -411,7 +415,7 @@ export const Home = () => {
                     Working Hours
                   </span>
                   <p className="font-heading font-bold text-slate-900 dark:text-white text-base">
-                    Mon - Sat: 9:00 AM - 8:00 PM EST
+                    {contactHours}
                   </p>
                 </div>
               </div>
