@@ -11,7 +11,7 @@ const getEnvVar = (key) => {
 };
 
 const rawUrl = getEnvVar('VITE_SUPABASE_URL') || 'https://npqfnzuyglgrzsetrbdo.supabase.co';
-const rawKey = getEnvVar('VITE_SUPABASE_ANON_KEY') || getEnvVar('VITE_SUPABASE_PUBLISHABLE_KEY') || getEnvVar('VITE_SUPABASE_KEY') || '';
+const rawKey = getEnvVar('VITE_SUPABASE_ANON_KEY') || getEnvVar('VITE_SUPABASE_PUBLISHABLE_KEY') || getEnvVar('VITE_SUPABASE_KEY') || 'sb_publishable_m8Nk5FuqNHy21iqIq8xwOQ_hach0Eks';
 
 export const supabaseUrl = rawUrl.trim().replace(/^["']|["']$/g, '');
 export const supabaseAnonKey = rawKey.trim().replace(/^["']|["']$/g, '');

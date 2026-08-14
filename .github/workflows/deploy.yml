@@ -33,6 +33,9 @@ jobs:
 
       - name: Build production app
         run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://npqfnzuyglgrzsetrbdo.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'sb_publishable_m8Nk5FuqNHy21iqIq8xwOQ_hach0Eks' }}
 
       - name: Create 404 SPA fallback for GitHub Pages
         run: cp dist/index.html dist/404.html
