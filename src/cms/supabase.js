@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://npqfnzuyglgrzsetrbdo.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 // Validate if real Supabase credentials are provided
@@ -9,7 +9,8 @@ export const isSupabaseConfigured = () => {
     supabaseUrl &&
     supabaseAnonKey &&
     !supabaseUrl.includes('your-project-id') &&
-    !supabaseAnonKey.includes('your-supabase-anon-key')
+    !supabaseAnonKey.includes('your-supabase-anon-key') &&
+    supabaseAnonKey.trim().length > 20
   );
 };
 
