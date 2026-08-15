@@ -6,6 +6,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { useScrollPosition } from '../hooks/useScrollPosition';
 
 import { useCMS } from '../cms/cmsContext';
+import { useAuth } from '../cms/authContext';
 
 const navItems = [
   { label: 'Home', path: '/' },
@@ -19,6 +20,7 @@ const navItems = [
 
 
 export const Navbar = () => {
+  const { isAdmin } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isScrolled } = useScrollPosition();
   const location = useLocation();
@@ -89,8 +91,19 @@ export const Navbar = () => {
           })}
         </nav>
 
-        {/* Right: Theme Toggle & CTA */}
-        <div className="hidden md:flex items-center gap-4">
+        {/* Right: Theme Toggle, Admin Badge & CTA */}
+        <div className="hidden md:flex items-center gap-3">
+          {isAdmin && (
+            <Link
+              to="/super-admin"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-violet-500/15 border border-violet-500/30 text-violet-400 hover:bg-violet-500/25 transition-colors shadow-sm"
+              title="Open Super Admin Dashboard"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Admin Portal</span>
+            </Link>
+          )}
+
           <ThemeToggle />
 
           <Link to="/contact">

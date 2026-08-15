@@ -18,7 +18,13 @@ export const AuthProvider = ({ children }) => {
   // Helper to verify admin status from database or super admin whitelist
   const verifyAdminInDb = async (authUser) => {
     if (!authUser) return null;
-    const userEmail = (authUser.email || '').toLowerCase();
+    const userEmail = (
+      authUser.email ||
+      authUser.user_metadata?.email ||
+      authUser.identities?.[0]?.identity_data?.email ||
+      ''
+    ).toLowerCase().trim();
+
     const isWhitelisted = AUTHORIZED_SUPER_ADMIN_EMAILS.some(
       (e) => e.toLowerCase() === userEmail
     );
