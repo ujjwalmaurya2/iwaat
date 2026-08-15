@@ -227,9 +227,9 @@ export const Footer = () => {
 
             {/* Portal Link */}
             <Link
-              to="/super-admin"
+              to="/super-admin/login"
               className="p-2 rounded-full bg-slate-900/60 border border-slate-800 text-slate-500 hover:text-violet-400 transition-colors ml-2"
-              title="Super Admin Portal"
+              title="Super Admin Portal Login"
             >
               <ShieldCheck className="w-4 h-4" />
             </Link>
