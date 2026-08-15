@@ -47,8 +47,7 @@ export const Navbar = () => {
           <BrandLockup
             layout="stacked"
             showMotto={true}
-            logoSize="w-8 h-8 rounded-xl"
-            iconSize="w-4 h-4"
+            logoSize="w-9 h-9 sm:w-10 sm:h-10"
             wordmarkSize="text-2xl"
             mottoSize="text-[11px] sm:text-[12px]"
           />
@@ -125,7 +124,7 @@ export const Navbar = () => {
           onClick={closeMobileMenu}
           className="group"
         >
-          <BrandLockup layout="row" showMotto={false} logoSize="w-8 h-8 rounded-xl" iconSize="w-4 h-4" wordmarkSize="text-xl" />
+          <BrandLockup layout="row" showMotto={false} logoSize="w-8 h-8" wordmarkSize="text-xl" />
         </Link>
 
         {/* Right: Theme Toggle & Menu Button */}

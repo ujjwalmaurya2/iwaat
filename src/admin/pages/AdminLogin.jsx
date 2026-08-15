@@ -81,7 +81,7 @@ export const AdminLogin = () => {
         {/* Brand Header */}
         <div className="text-center space-y-3">
           <Link to="/" className="inline-flex">
-            <BrandLockup layout="col" showMotto={true} icon={ShieldCheck} logoSize="w-12 h-12 rounded-2xl" iconSize="w-6 h-6" />
+            <BrandLockup layout="col" showMotto={true} logoSize="w-14 h-14" />
           </Link>
           <h2 className="font-heading font-extrabold text-2xl text-white">Super Admin Portal</h2>
           <p className="text-slate-400 text-xs sm:text-sm">

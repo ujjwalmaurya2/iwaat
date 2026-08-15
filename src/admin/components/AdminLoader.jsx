@@ -25,9 +25,7 @@ export const AdminLoader = ({ message = "Initializing Super Admin Portal..." }) 
           <BrandLockup 
             layout="col" 
             showMotto={true} 
-            icon={ShieldCheck} 
-            logoSize="w-16 h-16 rounded-3xl" 
-            iconSize="w-8 h-8" 
+            logoSize="w-16 h-16" 
             className="relative z-10 drop-shadow-xl"
           />
         </div>
