@@ -6,7 +6,7 @@ import { MagneticButton } from '../components/MagneticButton';
 
 export const NotFound = () => {
   return (
-    <div className="min-h-[80vh] flex items-center justify-center pt-28 pb-16 px-4">
+    <div className="min-h-[80vh] flex items-center justify-center pt-24 md:pt-36 pb-16 px-4">
       <div className="glass-panel p-10 sm:p-16 rounded-3xl glow-card text-center max-w-xl w-full space-y-6">
         <div className="font-heading font-extrabold text-7xl sm:text-8xl text-gradient-primary">
           404

@@ -29,7 +29,7 @@ const valueIcons = {
 
 export const About = () => {
   return (
-    <div className="pt-28 pb-20 space-y-24">
+    <div className="pt-24 md:pt-36 pb-20 space-y-24">
       {/* Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader

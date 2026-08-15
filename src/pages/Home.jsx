@@ -44,7 +44,7 @@ export const Home = () => {
   return (
     <div className="space-y-24 md:space-y-32 pb-16">
       {/* HERO SECTION */}
-      <section className="relative min-h-[90vh] flex items-center justify-center pt-28 pb-16 overflow-hidden">
+      <section className="relative min-h-[90vh] flex items-center justify-center pt-24 md:pt-36 pb-16 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
             {/* Left Content */}
