@@ -21,7 +21,7 @@ export const Contact = () => {
         <SectionHeader
           badge="Let's Talk"
           title="Start Your Project With"
-          highlight="iWAAt Today"
+          highlight="iWAAT Today"
           subtitle="Ready to build a modern website, custom software app, or scale your digital marketing? Reach out to our engineering and design team for a free consultation proposal."
         />
       </div>
@@ -118,7 +118,7 @@ export const Contact = () => {
           badge="Got Questions?"
           title="Common Questions Before"
           highlight="Starting A Project"
-          subtitle="Explore quick answers to common questions about working with iWAAt."
+          subtitle="Explore quick answers to common questions about working with iWAAT."
         />
         <FAQAccordion />
       </div>

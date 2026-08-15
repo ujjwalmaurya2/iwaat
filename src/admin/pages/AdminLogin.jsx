@@ -3,6 +3,8 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShieldCheck, ArrowRight, AlertCircle, Sparkles, LogOut, CheckCircle2, Lock } from 'lucide-react';
 import { useAuth } from '../../cms/authContext';
+import { BrandLockup } from '../../components/BrandLockup';
+import { AdminLoader } from '../components/AdminLoader';
 
 export const AdminLogin = () => {
   const { user, adminProfile, isAdmin, loginWithGoogle, loginDevMock, logout, isSupabase, loading } = useAuth();
@@ -65,6 +67,10 @@ export const AdminLogin = () => {
     </svg>
   );
 
+  if (loading) {
+    return <AdminLoader message="Checking authentication status..." />;
+  }
+
   return (
     <div className="min-h-screen bg-[#070A14] flex flex-col items-center justify-center p-4 relative overflow-hidden selection:bg-violet-500 selection:text-white">
       {/* Background Decorative Mesh */}
@@ -74,15 +80,8 @@ export const AdminLogin = () => {
       <div className="w-full max-w-md relative z-10 space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-3">
-          <Link to="/" className="inline-flex items-center gap-2.5">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-violet-600 via-purple-600 to-orange-500 p-0.5 shadow-xl shadow-violet-500/25">
-              <div className="w-full h-full bg-[#0B1020] rounded-[14px] flex items-center justify-center text-violet-400">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
-            </div>
-            <span className="font-heading font-extrabold text-2xl tracking-tight text-white">
-              iWAAt<span className="text-violet-500">.</span>
-            </span>
+          <Link to="/" className="inline-flex">
+            <BrandLockup layout="col" showMotto={true} icon={ShieldCheck} logoSize="w-12 h-12 rounded-2xl" iconSize="w-6 h-6" />
           </Link>
           <h2 className="font-heading font-extrabold text-2xl text-white">Super Admin Portal</h2>
           <p className="text-slate-400 text-xs sm:text-sm">

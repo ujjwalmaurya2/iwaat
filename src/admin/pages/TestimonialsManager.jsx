@@ -118,7 +118,7 @@ export const TestimonialsManager = () => {
                 rows="4"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder="What the client said about iWAAt..."
+                placeholder="What the client said about iWAAT..."
                 required
                 className="w-full px-4 py-2.5 rounded-2xl bg-slate-900 border border-slate-800 text-white text-xs sm:text-sm focus:outline-none focus:border-violet-500"
               />

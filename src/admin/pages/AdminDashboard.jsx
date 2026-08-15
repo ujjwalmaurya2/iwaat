@@ -73,7 +73,7 @@ export const AdminDashboard = () => {
               <span>Super Admin Master Control</span>
             </span>
             <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-white tracking-tight">
-              iWAAt Content & Growth Hub
+              iWAAT Content & Growth Hub
             </h2>
             <p className="text-slate-400 text-xs sm:text-sm max-w-2xl leading-relaxed">
               Create and publish projects, generate live website screenshots, manage client inquiries, and customize all agency information in real-time.

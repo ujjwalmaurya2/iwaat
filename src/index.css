@@ -43,6 +43,10 @@
   }
 }
 
+@utility font-brand {
+  font-family: 'Sora', sans-serif;
+}
+
 /* Glassmorphism & Cards */
 .glass-panel {
   background: var(--bg-card);

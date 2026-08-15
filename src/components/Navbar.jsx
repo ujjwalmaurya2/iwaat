@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowUpRight, Sparkles } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { useScrollPosition } from '../hooks/useScrollPosition';
-
+import { BrandLockup } from './BrandLockup';
 import { useCMS } from '../cms/cmsContext';
 import { useAuth } from '../cms/authContext';
 
@@ -41,22 +41,9 @@ export const Navbar = () => {
         <Link
           to="/"
           onClick={closeMobileMenu}
-          className="flex items-center gap-2.5 group"
+          className="group"
         >
-          <motion.div
-            whileHover={{ rotate: 180, scale: 1.1 }}
-            transition={{ duration: 0.5 }}
-            className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-violet-600 via-purple-600 to-orange-500 p-0.5 shadow-md shadow-violet-500/20"
-          >
-            <div className="w-full h-full bg-[#0B1020] dark:bg-[#0B1020] light:bg-white rounded-[14px] flex items-center justify-center text-violet-400 group-hover:text-orange-400 transition-colors">
-              <Sparkles className="w-5 h-5 fill-violet-400/20" />
-            </div>
-          </motion.div>
-          <div className="flex flex-col">
-            <span className="font-heading font-extrabold text-2xl tracking-tight text-slate-900 dark:text-white flex items-center gap-1">
-              iWAAt<span className="text-violet-500">.</span>
-            </span>
-          </div>
+          <BrandLockup layout="row" showMotto={true} />
         </Link>
 
         {/* Center: Desktop Nav Links */}

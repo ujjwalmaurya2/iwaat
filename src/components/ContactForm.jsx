@@ -59,7 +59,7 @@ export const ContactForm = () => {
             Project Proposal Received!
           </h3>
           <p className="text-slate-600 dark:text-slate-300 text-sm max-w-md mx-auto leading-relaxed">
-            Thank you for reaching out to <span className="font-bold text-violet-500">iWAAt</span>. Our senior technical team has received your project details and will reply within 24 hours.
+            Thank you for reaching out to <span className="font-bold text-violet-500">iWAAT</span>. Our senior technical team has received your project details and will reply within 24 hours.
           </p>
           <button
             onClick={() => setSubmitted(false)}

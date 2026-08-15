@@ -37,7 +37,7 @@ export const Process = () => {
           </h3>
 
           <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
-            Every line of code written by iWAAt undergoes automated static analysis, cross-browser compatibility checks, accessibility testing, and security hardening before reaching production servers.
+            Every line of code written by iWAAT undergoes automated static analysis, cross-browser compatibility checks, accessibility testing, and security hardening before reaching production servers.
           </p>
 
           <div className="pt-2">

@@ -5,7 +5,7 @@ import { useCMS } from '../../cms/cmsContext';
 export const WebsiteSettings = () => {
   const { websiteSettings, updateWebsiteSettings } = useCMS();
 
-  const [name, setName] = useState('iWAAt');
+  const [name, setName] = useState('iWAAT');
   const [tagline, setTagline] = useState('');
   const [shortDescription, setShortDescription] = useState('');
   const [aboutDescription, setAboutDescription] = useState('');
@@ -20,7 +20,7 @@ export const WebsiteSettings = () => {
 
   useEffect(() => {
     if (websiteSettings) {
-      setName(websiteSettings.name || 'iWAAt');
+      setName(websiteSettings.name || 'iWAAT');
       setTagline(websiteSettings.tagline || '');
       setShortDescription(websiteSettings.short_description || '');
       setAboutDescription(websiteSettings.about_description || '');

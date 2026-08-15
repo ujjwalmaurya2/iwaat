@@ -251,7 +251,7 @@ export const Home = () => {
       {/* WHY CHOOSE US SECTION */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          badge="Why Choose iWAAt"
+          badge="Why Choose iWAAT"
           title="The Digital Partner Your Business"
           highlight="Deserves"
           subtitle="We combine top-tier technical craftsmanship with strategic design to ensure every digital product we create yields exceptional business results."
@@ -315,7 +315,7 @@ export const Home = () => {
             </h2>
 
             <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
-              Whether you need a website, software platform, branding, or digital marketing, {websiteSettings?.name || 'iWAAt'} is ready to help your business scale.
+              Whether you need a website, software platform, branding, or digital marketing, {websiteSettings?.name || 'iWAAT'} is ready to help your business scale.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">

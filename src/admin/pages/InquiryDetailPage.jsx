@@ -228,7 +228,7 @@ export const InquiryDetailPage = () => {
             <div className="space-y-3">
               {inquiry.email && (
                 <a
-                  href={`mailto:${inquiry.email}?subject=Regarding your inquiry at iWAAt - ${inquiry.service}`}
+                  href={`mailto:${inquiry.email}?subject=Regarding your inquiry at iWAAT - ${inquiry.service}`}
                   className="w-full py-3 px-4 rounded-2xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-violet-500/20 transition-colors"
                 >
                   <Mail className="w-4 h-4" />
@@ -238,7 +238,7 @@ export const InquiryDetailPage = () => {
 
               {inquiry.phone && (
                 <a
-                  href={`https://wa.me/${inquiry.phone.replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(inquiry.name)},%20thank%20you%20for%20reaching%20out%20to%20iWAAt%20Digital%20Services.`}
+                  href={`https://wa.me/${inquiry.phone.replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(inquiry.name)},%20thank%20you%20for%20reaching%20out%20to%20iWAAT%20Digital%20Services.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-colors"

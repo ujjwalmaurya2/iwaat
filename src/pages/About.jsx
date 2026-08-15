@@ -33,7 +33,7 @@ export const About = () => {
       {/* Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          badge="About iWAAt"
+          badge="About iWAAT"
           title="A Multidisciplinary Digital Team Focused On"
           highlight="Engineering Excellence"
           subtitle={companyData.shortDescription}
@@ -61,7 +61,7 @@ export const About = () => {
             <div className="pt-4 flex items-center gap-4">
               <Link to="/contact">
                 <MagneticButton variant="primary">
-                  <span>Work With iWAAt</span>
+                  <span>Work With iWAAT</span>
                   <ArrowUpRight className="w-4 h-4" />
                 </MagneticButton>
               </Link>
@@ -79,7 +79,7 @@ export const About = () => {
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 aspect-[4/3] bg-slate-900">
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1200&auto=format&fit=crop"
-                alt="iWAAt Collaborative Team Workspace"
+                alt="iWAAT Collaborative Team Workspace"
                 className="w-full h-full object-cover opacity-90 hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80" />

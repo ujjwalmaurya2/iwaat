@@ -67,8 +67,8 @@ export const AdminSidebar = ({ mobileOpen, closeMobile }) => {
                 </div>
               </div>
               <div>
-                <span className="font-heading font-extrabold text-lg tracking-tight text-white flex items-center gap-1">
-                  iWAAt <span className="text-xs px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 font-mono">CMS</span>
+                <span className="font-brand font-semibold text-lg tracking-tight text-white flex items-center gap-1">
+                  iWAAT <span className="text-xs px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 font-mono">CMS</span>
                 </span>
                 <span className="text-[11px] text-slate-400 block font-medium">Super Admin Portal</span>
               </div>

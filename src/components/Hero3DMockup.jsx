@@ -117,7 +117,7 @@ export const Hero3DMockup = () => {
           </div>
           <div className="space-y-1 text-slate-300">
             <div>
-              <span className="text-pink-400">const</span> <span className="text-amber-300">iWAAt</span> = () =&gt; &#123;
+              <span className="text-pink-400">const</span> <span className="text-amber-300">iWAAT</span> = () =&gt; &#123;
             </div>
             <div className="pl-3 text-slate-400">
               return &lt;<span className="text-violet-400">DigitalProduct</span>

@@ -220,7 +220,7 @@ CREATE TABLE IF NOT EXISTS public.contact_settings (
 -- 10. WEBSITE SETTINGS
 CREATE TABLE IF NOT EXISTS public.website_settings (
   id TEXT PRIMARY KEY DEFAULT 'default',
-  name TEXT NOT NULL DEFAULT 'iWAAt',
+  name TEXT NOT NULL DEFAULT 'iWAAT',
   tagline TEXT,
   short_description TEXT,
   about_description TEXT,

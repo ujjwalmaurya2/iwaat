@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Sparkles, ArrowRight, Heart, CheckCircle2, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useCMS } from '../cms/cmsContext';
+import { BrandLockup } from './BrandLockup';
 
 export const Footer = () => {
   const [email, setEmail] = useState('');
@@ -42,15 +43,8 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 pb-16 border-b border-slate-800/80">
           {/* Brand Col */}
           <div className="lg:col-span-2 space-y-6">
-            <Link to="/" className="inline-flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-violet-600 to-orange-500 p-0.5 shadow-md shadow-violet-500/20">
-                <div className="w-full h-full bg-[#0B1020] rounded-[14px] flex items-center justify-center text-violet-400">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-              </div>
-              <span className="font-heading font-extrabold text-2xl tracking-tight text-white">
-                {websiteSettings?.name || 'iWAAt'}<span className="text-violet-500">.</span>
-              </span>
+            <Link to="/" className="inline-flex">
+              <BrandLockup layout="col" showMotto={true} className="items-start text-left" />
             </Link>
 
             <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
@@ -66,7 +60,7 @@ export const Footer = () => {
               {subscribed ? (
                 <div className="flex items-center gap-2 p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-medium">
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>Thank you for subscribing to {websiteSettings?.name || 'iWAAt'} updates!</span>
+                  <span>Thank you for subscribing to {websiteSettings?.name || 'iWAAT'} updates!</span>
                 </div>
               ) : (
                 <form onSubmit={handleSubscribe} className="flex items-center gap-2">
@@ -163,7 +157,7 @@ export const Footer = () => {
         {/* Bottom copyright & Socials */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
           <p className="flex items-center gap-1">
-            {websiteSettings?.copyright_text || '© 2026 iWAAt Digital Services. Crafted with '}
+            {websiteSettings?.copyright_text || '© 2026 iWAAT Digital Services. Crafted with '}
             <Heart className="w-3.5 h-3.5 fill-red-500 text-red-500 mx-1 inline" />
             <span>for global impact.</span>
           </p>

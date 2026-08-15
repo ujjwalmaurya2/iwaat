@@ -173,15 +173,15 @@ export async function seedInitialDataIfNeeded() {
       // 7. Website Settings
       const initialWebsiteSettings = {
         id: 'default',
-        name: initialCompany.name || 'iWAAt',
+        name: initialCompany.name || 'iWAAT',
         tagline: initialCompany.tagline || 'We Build. We Scale. We Market.',
-        short_description: initialCompany.shortDescription || 'iWAAt is a multidisciplinary digital services team.',
+        short_description: initialCompany.shortDescription || 'iWAAT is a multidisciplinary digital services team.',
         about_description: initialCompany.fullStory || '',
-        seo_title: 'iWAAt — Modern Digital Services, Web Development & Growth Agency',
+        seo_title: 'iWAAT — Modern Digital Services, Web Development & Growth Agency',
         seo_description: 'We engineer high-performance web applications, bespoke software, luxury UI/UX design, and ROI-driven marketing campaigns.',
         seo_keywords: 'web development, react, custom software, digital marketing, seo, ui ux design, branding',
         og_image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=1200&auto=format&fit=crop',
-        copyright_text: '© 2026 iWAAt Digital Services. All rights reserved.',
+        copyright_text: '© 2026 iWAAT Digital Services. All rights reserved.',
         updated_at: new Date().toISOString()
       };
       await db.website_settings.put(initialWebsiteSettings);

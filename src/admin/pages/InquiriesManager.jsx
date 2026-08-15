@@ -170,7 +170,7 @@ export const InquiriesManager = () => {
                 <div className="flex flex-wrap items-center gap-2 shrink-0">
                   {inq.email && (
                     <a
-                      href={`mailto:${inq.email}?subject=iWAAt Project Consultation - ${inq.name}`}
+                      href={`mailto:${inq.email}?subject=iWAAT Project Consultation - ${inq.name}`}
                       className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-violet-400 hover:bg-slate-800 transition-colors"
                       title="Send Email"
                     >
