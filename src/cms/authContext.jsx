@@ -91,14 +91,28 @@ export const AuthProvider = ({ children }) => {
     async function initAuth() {
       try {
         if (isSupabaseConfigured() && supabase) {
+          // Check if landing with OAuth hash / code
+          const isOAuthCallback = typeof window !== 'undefined' && (
+            window.location.hash.includes('access_token=') ||
+            window.location.search.includes('code=') ||
+            sessionStorage.getItem('iwaat_admin_login_intent') === 'true'
+          );
+
           // 1. Check active Supabase session (Google OAuth)
           const { data: { session } } = await supabase.auth.getSession();
           if (session?.user && isMounted) {
             setUser(session.user);
             const profile = await verifyAdminInDb(session.user);
             if (isMounted) {
+              const isAdminUser = Boolean(profile && profile.status === 'active');
               setAdminProfile(profile);
-              setIsAdmin(Boolean(profile && profile.status === 'active'));
+              setIsAdmin(isAdminUser);
+
+              if (isAdminUser && isOAuthCallback && !window.location.pathname.startsWith('/super-admin')) {
+                sessionStorage.removeItem('iwaat_admin_login_intent');
+                window.location.replace('/super-admin');
+                return;
+              }
             }
           } else if (isMounted) {
             setUser(null);
@@ -113,9 +127,15 @@ export const AuthProvider = ({ children }) => {
               setUser(session.user);
               const profile = await verifyAdminInDb(session.user);
               if (isMounted) {
+                const isAdminUser = Boolean(profile && profile.status === 'active');
                 setAdminProfile(profile);
-                setIsAdmin(Boolean(profile && profile.status === 'active'));
+                setIsAdmin(isAdminUser);
                 setLoading(false);
+
+                if (isAdminUser && (event === 'SIGNED_IN' || isOAuthCallback) && !window.location.pathname.startsWith('/super-admin')) {
+                  sessionStorage.removeItem('iwaat_admin_login_intent');
+                  window.location.replace('/super-admin');
+                }
               }
             } else {
               setUser(null);
@@ -162,6 +182,10 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
 
     try {
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('iwaat_admin_login_intent', 'true');
+      }
+
       if (isSupabaseConfigured() && supabase) {
         // Production: Redirect to Supabase Google OAuth Provider
         const redirectTo = `${window.location.origin}/super-admin`;
