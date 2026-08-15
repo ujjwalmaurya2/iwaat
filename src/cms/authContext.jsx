@@ -193,8 +193,13 @@ export const AuthProvider = ({ children }) => {
       }
 
       if (isSupabaseConfigured() && supabase) {
-        // Production: Redirect to Supabase Google OAuth Provider
-        const redirectTo = `${window.location.origin}/super-admin`;
+        // CRITICAL: Always redirect OAuth callback to the production domain.
+        // Vercel preview URLs (iwaat-xxx.vercel.app) have Vercel Authentication enabled,
+        // which intercepts the OAuth callback and strips the access_token before the app sees it.
+        // By redirecting to the clean production domain, we bypass that interception entirely.
+        const PRODUCTION_ORIGIN = 'https://iwaat.vercel.app';
+        const redirectTo = `${PRODUCTION_ORIGIN}/super-admin`;
+
         const { error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {
