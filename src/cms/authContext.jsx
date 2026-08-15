@@ -3,6 +3,11 @@ import { supabase, isSupabaseConfigured } from './supabase';
 
 const AuthContext = createContext(null);
 
+export const AUTHORIZED_SUPER_ADMIN_EMAILS = [
+  'ujjwalmaurya2@gmail.com',
+  'admin@iwaat.com',
+];
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [adminProfile, setAdminProfile] = useState(null);
@@ -10,45 +15,74 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
 
-  // Helper to verify admin status from database
+  // Helper to verify admin status from database or super admin whitelist
   const verifyAdminInDb = async (authUser) => {
-    if (!authUser || !supabase) return null;
-    try {
-      // 1. Check admin_users table by auth_user_id OR email
-      const { data, error } = await supabase
-        .from('admin_users')
-        .select('*')
-        .or(`auth_user_id.eq.${authUser.id},email.eq.${authUser.email}`)
-        .maybeSingle();
+    if (!authUser) return null;
+    const userEmail = (authUser.email || '').toLowerCase();
+    const isWhitelisted = AUTHORIZED_SUPER_ADMIN_EMAILS.some(
+      (e) => e.toLowerCase() === userEmail
+    );
 
-      if (error) {
-        console.warn('[Auth] Note querying admin_users:', error.message);
-      }
+    let dbProfile = null;
 
-      if (data && data.status === 'active') {
-        // Link auth_user_id if it was not linked yet
-        if (!data.auth_user_id || data.auth_user_id !== authUser.id) {
-          try {
-            await supabase
-              .from('admin_users')
-              .update({
-                auth_user_id: authUser.id,
-                last_login_at: new Date().toISOString(),
-                avatar_url: authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture || data.avatar_url,
-                full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || data.full_name,
-              })
-              .eq('email', authUser.email);
-          } catch (updateErr) {
-            // Ignored if RLS update policy restricts non-superadmin
+    if (supabase) {
+      try {
+        // 1. Check admin_users table by auth_user_id OR email
+        const { data, error } = await supabase
+          .from('admin_users')
+          .select('*')
+          .or(`auth_user_id.eq.${authUser.id},email.eq.${userEmail}`)
+          .maybeSingle();
+
+        if (error) {
+          console.warn('[Auth] Note querying admin_users:', error.message);
+        }
+
+        if (data && data.status === 'active') {
+          dbProfile = data;
+          // Link auth_user_id if it was not linked yet
+          if (!data.auth_user_id || data.auth_user_id !== authUser.id) {
+            try {
+              await supabase
+                .from('admin_users')
+                .update({
+                  auth_user_id: authUser.id,
+                  last_login_at: new Date().toISOString(),
+                  avatar_url: authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture || data.avatar_url,
+                  full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || data.full_name,
+                })
+                .eq('email', userEmail);
+            } catch (updateErr) {
+              // Ignored if RLS update policy restricts
+            }
           }
         }
-        return data;
+      } catch (e) {
+        console.error('[Auth] verifyAdminInDb query error:', e);
       }
-      return null;
-    } catch (e) {
-      console.error('[Auth] verifyAdminInDb error:', e);
-      return null;
     }
+
+    // If active in DB, return DB profile
+    if (dbProfile) {
+      return dbProfile;
+    }
+
+    // If whitelisted super admin email, grant active super admin access immediately
+    if (isWhitelisted) {
+      return {
+        id: authUser.id || 'super-admin-root',
+        auth_user_id: authUser.id,
+        email: authUser.email,
+        full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || 'Ujjwal Maurya',
+        avatar_url: authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture || '',
+        role: 'super_admin',
+        status: 'active',
+        created_at: new Date().toISOString(),
+        last_login_at: new Date().toISOString(),
+      };
+    }
+
+    return null;
   };
 
   useEffect(() => {
