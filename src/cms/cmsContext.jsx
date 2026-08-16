@@ -602,11 +602,10 @@ export const CMSProvider = ({ children }) => {
       created_at: new Date().toISOString(),
     };
 
-    // 1. Submit to Supabase if connected
+    // 1. Submit to Supabase if connected (Postgres trigger handles notification creation)
     if (isSupabaseConfigured() && supabase) {
       try {
         await supabase.from('inquiries').insert([newInquiry]);
-        await supabase.from('notifications').insert([newNotification]);
       } catch (err) {
         console.warn('[CMS Inquiries] Supabase insert failed, storing in local fallback queue...', err);
       }

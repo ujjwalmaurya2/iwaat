@@ -48,6 +48,7 @@ export const InquiriesManager = () => {
       inq.name.toLowerCase().includes(search.toLowerCase()) ||
       inq.email.toLowerCase().includes(search.toLowerCase()) ||
       (inq.company && inq.company.toLowerCase().includes(search.toLowerCase())) ||
+      (inq.budget && inq.budget.toLowerCase().includes(search.toLowerCase())) ||
       inq.description.toLowerCase().includes(search.toLowerCase());
 
     const matchesStatus =

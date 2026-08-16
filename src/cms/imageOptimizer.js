@@ -1,16 +1,119 @@
+export const ALLOWED_IMAGE_MIME_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+  'image/svg+xml',
+];
+
+export const MAX_UPLOAD_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
 /**
- * Client-Side Image Optimizer and WebP Converter
- * Compresses images before upload/storage to minimize latency and bandwidth.
+ * Validates file MIME type and size limits
  */
+export function validateImageFile(file) {
+  if (!file) {
+    throw new Error('No file provided.');
+  }
+
+  if (file.size > MAX_UPLOAD_FILE_SIZE) {
+    throw new Error(`File size (${(file.size / (1024 * 1024)).toFixed(2)} MB) exceeds the maximum allowed limit of 10 MB.`);
+  }
+
+  const mimeType = (file.type || '').toLowerCase();
+  const extension = (file.name || '').split('.').pop()?.toLowerCase();
+
+  const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'];
+
+  if (!ALLOWED_IMAGE_MIME_TYPES.includes(mimeType) && !allowedExtensions.includes(extension)) {
+    throw new Error(`Unsupported file format "${mimeType || extension}". Only JPG, PNG, WebP, GIF, and SVG images are allowed.`);
+  }
+
+  return true;
+}
+
+/**
+ * Strips executable scripts, event handlers, javascript: URIs, and dangerous elements from SVG markup.
+ */
+export function sanitizeSvg(svgContent) {
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svgContent, 'image/svg+xml');
+
+    // Check for parse error
+    const parserError = doc.querySelector('parsererror');
+    if (parserError) {
+      throw new Error('Invalid SVG markup format.');
+    }
+
+    const svgElement = doc.documentElement;
+    if (svgElement.nodeName.toLowerCase() !== 'svg') {
+      throw new Error('Document root is not an SVG element.');
+    }
+
+    // Dangerous elements to remove
+    const forbiddenTags = [
+      'script', 'foreignobject', 'iframe', 'object', 'embed', 
+      'link', 'meta', 'style', 'audio', 'video', 'base', 'applet'
+    ];
+
+    forbiddenTags.forEach((tag) => {
+      const elements = doc.querySelectorAll(tag);
+      elements.forEach((el) => el.parentNode?.removeChild(el));
+    });
+
+    // Remove all inline event handlers (onload, onclick, etc.) and javascript: URIs across all nodes
+    const allNodes = doc.querySelectorAll('*');
+    allNodes.forEach((node) => {
+      const attributes = Array.from(node.attributes);
+      attributes.forEach((attr) => {
+        const attrName = attr.name.toLowerCase();
+        const attrValue = attr.value.trim().toLowerCase();
+
+        // Remove any on* event handler
+        if (attrName.startsWith('on')) {
+          node.removeAttribute(attr.name);
+        }
+
+        // Remove dangerous href/src attributes containing javascript:, data:text/html, etc.
+        if (
+          (attrName === 'href' || attrName === 'xlink:href' || attrName === 'src') &&
+          (attrValue.startsWith('javascript:') || attrValue.startsWith('data:text/html') || attrValue.startsWith('vbscript:'))
+        ) {
+          node.removeAttribute(attr.name);
+        }
+      });
+    });
+
+    const serializer = new XMLSerializer();
+    return serializer.serializeToString(doc);
+  } catch (err) {
+    throw new Error('SVG sanitization failed: ' + err.message);
+  }
+}
 
 export async function optimizeImage(fileOrBlob, maxWidth = 1600, maxHeight = 1000, quality = 0.85) {
+  // Validate file bounds if File instance
+  if (fileOrBlob instanceof File) {
+    validateImageFile(fileOrBlob);
+  }
+
   return new Promise((resolve, reject) => {
-    // If SVG, return as is
-    if (fileOrBlob.type === 'image/svg+xml') {
+    // If SVG, sanitize markup before returning data URL
+    if (fileOrBlob.type === 'image/svg+xml' || (fileOrBlob.name && fileOrBlob.name.endsWith('.svg'))) {
       const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
+      reader.onload = () => {
+        try {
+          const rawText = reader.result;
+          const cleanSvg = sanitizeSvg(rawText);
+          const encodedDataUrl = `data:image/svg+xml;utf8,${encodeURIComponent(cleanSvg)}`;
+          resolve(encodedDataUrl);
+        } catch (err) {
+          reject(err);
+        }
+      };
       reader.onerror = reject;
-      reader.readAsDataURL(fileOrBlob);
+      reader.readAsText(fileOrBlob);
       return;
     }
 

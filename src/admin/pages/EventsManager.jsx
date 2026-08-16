@@ -215,7 +215,7 @@ export const EventsManager = () => {
                 <input
                   type="file"
                   multiple
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
                   onChange={handleMultipleUpload}
                   disabled={isUploading}
                   className="hidden"

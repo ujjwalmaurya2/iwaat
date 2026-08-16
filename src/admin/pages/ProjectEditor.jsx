@@ -379,7 +379,7 @@ export const ProjectEditor = () => {
                   <span>Upload Custom Screenshot</span>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
                     onChange={handleCustomUpload}
                     className="hidden"
                   />

@@ -50,7 +50,7 @@ export const MediaLibrary = () => {
           <input
             type="file"
             multiple
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
             onChange={handleUpload}
             disabled={isUploading}
             className="hidden"
