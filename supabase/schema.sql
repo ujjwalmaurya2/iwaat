@@ -447,7 +447,7 @@ INSERT INTO public.contact_settings (
 )
 VALUES (
   'default',
-  'hello@iwaat.com',
+  'iwaatproduction@gmail.com',
   'support@iwaat.com',
   '+1 (800) 492-2800',
   '+1 (800) 492-2801',
@@ -470,7 +470,7 @@ VALUES (
   'iWAAT Agency',
   'Engineering High-Impact Digital Solutions & Scalable Web Applications',
   'Premier digital agency specializing in custom web platforms, e-commerce, cloud infrastructure, and enterprise digital solutions.',
-  'hello@iwaat.com',
+  'iwaatproduction@gmail.com',
   'Engineering Digital Excellence for Modern Global Brands',
   'We architect bespoke digital products, responsive web apps, and secure high-performance platforms.'
 )

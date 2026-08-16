@@ -145,7 +145,7 @@ export const CMSProvider = ({ children }) => {
         else if (localContact) setContactSettings(localContact);
         else setContactSettings({
           id: 'default',
-          email: 'hello@iwaat.com',
+          email: 'iwaatproduction@gmail.com',
           secondary_email: 'support@iwaat.com',
           phone: '+1 (800) 492-2800',
           secondary_phone: '+1 (800) 492-2801',
@@ -167,7 +167,7 @@ export const CMSProvider = ({ children }) => {
           site_name: 'iWAAT Agency',
           tagline: 'Engineering High-Impact Digital Solutions & Scalable Web Applications',
           description: 'Premier digital agency specializing in custom web platforms, e-commerce, cloud infrastructure, and enterprise digital solutions.',
-          primary_email: 'hello@iwaat.com',
+          primary_email: 'iwaatproduction@gmail.com',
           hero_title: 'Engineering Digital Excellence for Modern Global Brands',
           hero_subtitle: 'We architect bespoke digital products, responsive web apps, and secure high-performance platforms.'
         });

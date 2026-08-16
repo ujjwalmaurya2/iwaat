@@ -147,9 +147,10 @@ export async function seedInitialDataIfNeeded() {
       await db.events.bulkPut(initialEvents);
 
       // 6. Contact Settings
+      const existingContact = await db.contact_settings.get('default');
       const initialContactSettings = {
         id: 'default',
-        email: initialCompany.contactInfo?.email || 'hello@iwaat.com',
+        email: initialCompany.contactInfo?.email || 'iwaatproduction@gmail.com',
         secondary_email: 'support@iwaat.com',
         phone: initialCompany.contactInfo?.phone || '+1 (800) 492-2800',
         secondary_phone: '+1 (800) 492-2801',
@@ -168,7 +169,11 @@ export async function seedInitialDataIfNeeded() {
         },
         updated_at: new Date().toISOString()
       };
-      await db.contact_settings.put(initialContactSettings);
+      if (!existingContact) {
+        await db.contact_settings.put(initialContactSettings);
+      } else if (existingContact.email === 'hello@iwaat.com') {
+        await db.contact_settings.update('default', { email: 'iwaatproduction@gmail.com' });
+      }
 
       // 7. Website Settings
       const initialWebsiteSettings = {
