@@ -33,7 +33,7 @@ export const Navbar = () => {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? 'py-2 bg-white/90 dark:bg-[#070A14]/90 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/80 shadow-lg shadow-violet-500/5'
-          : 'pt-3.5 pb-2 bg-gradient-to-b from-[#070A14]/80 via-[#070A14]/40 to-transparent backdrop-blur-[2px]'
+          : 'pt-3.5 pb-2 bg-transparent dark:bg-gradient-to-b dark:from-[#070A14]/80 dark:via-[#070A14]/40 dark:to-transparent dark:backdrop-blur-[2px]'
       }`}
     >
       {/* DESKTOP TWO-ROW HEADER (>= md screens) */}
