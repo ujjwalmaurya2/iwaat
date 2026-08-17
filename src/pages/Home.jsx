@@ -59,11 +59,11 @@ export const Home = () => {
     <div className="space-y-24 md:space-y-32 pb-16">
       {/* Dynamic SEO Meta & Schema.org Graph */}
       <SEO
-        title={websiteSettings?.seo_title || 'iWAAT — Web Design, Web Development & Digital Agency'}
+        title={websiteSettings?.seo_title || 'iWAAT — Web Development & Digital Agency in Prayagraj'}
         description={
           websiteSettings?.seo_description ||
           websiteSettings?.short_description ||
-          fallbackCompany.shortDescription
+          'iWAAT is a web development and digital agency in Prayagraj, Uttar Pradesh, offering custom websites, software, UI/UX design, SEO, digital marketing and ecommerce solutions.'
         }
         canonicalUrl={getCanonicalUrl('/')}
         schema={[websiteSchema, orgSchema, serviceEntitySchema, faqSchema]}
@@ -91,11 +91,11 @@ export const Home = () => {
                 transition={{ duration: 0.6, delay: 0.1 }}
                 className="font-heading font-extrabold text-4xl sm:text-6xl lg:text-7xl tracking-tight text-slate-900 dark:text-white leading-[1.08]"
               >
-                Building Digital{' '}
+                Web Development &amp;{' '}
                 <span className="bg-gradient-to-r from-violet-500 via-orange-400 to-pink-500 bg-clip-text text-transparent">
-                  Experiences
+                  Digital Solutions
                 </span>{' '}
-                That Drive Business Growth
+                Engineered in Prayagraj
               </motion.h1>
 
               <motion.p
@@ -105,7 +105,7 @@ export const Home = () => {
                 className="text-slate-600 dark:text-slate-300 text-base sm:text-xl font-normal leading-relaxed max-w-2xl mx-auto lg:mx-0"
               >
                 {websiteSettings?.short_description ||
-                  'We design, develop, and market modern digital products—from websites and software platforms to branding, SEO, and growth solutions for startups, NGOs, healthcare, fitness, and commerce.'}
+                  'iWAAT is a web development and digital services agency serving businesses and organizations in Prayagraj, Uttar Pradesh, and clients across India and global markets.'}
               </motion.p>
 
               {/* Action Buttons */}
@@ -321,12 +321,44 @@ export const Home = () => {
         <TestimonialMarquee />
       </section>
 
-      {/* LARGE CTA BANNER */}
+      {/* LOCAL PRAYAGRAJ & REGIONAL HUB BANNER */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-[36px] overflow-hidden p-10 sm:p-16 text-center bg-gradient-to-r from-violet-900 via-indigo-900 to-slate-950 border border-violet-500/30 shadow-2xl">
-          <div className="absolute inset-0 bg-dot-pattern opacity-20 pointer-events-none" />
-          <div className="absolute -top-32 -left-32 w-96 h-96 bg-violet-500/30 rounded-full blur-[100px] pointer-events-none" />
-          <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-orange-500/20 rounded-full blur-[100px] pointer-events-none" />
+        <div className="glass-panel p-8 sm:p-12 rounded-3xl glow-card border border-violet-500/20 bg-gradient-to-r from-violet-950/30 via-slate-900/50 to-slate-950/60">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-8 space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 text-violet-400 text-xs font-semibold">
+                <MapPin className="w-3.5 h-3.5 text-orange-500" />
+                <span>Regional Engineering & Growth Hub</span>
+              </div>
+              <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 dark:text-white">
+                Web Development &amp; Website Design in Prayagraj
+              </h2>
+              <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
+                iWAAT is proud to support local businesses, hospitals, diagnostic labs, NGOs, retail shops, and startups across Prayagraj and Uttar Pradesh with enterprise-grade web development, custom software, and local SEO services.
+              </p>
+            </div>
+            <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-center">
+              <Link to="/web-development-prayagraj">
+                <MagneticButton variant="primary" className="w-full justify-center">
+                  <span>Explore Prayagraj Services</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </MagneticButton>
+              </Link>
+              <Link to="/resources">
+                <MagneticButton variant="glass" className="w-full justify-center">
+                  <span>Read Industry Guides</span>
+                </MagneticButton>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA SECTION */}
+      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative rounded-3xl overflow-hidden p-8 sm:p-16 text-center border border-slate-200/60 dark:border-slate-800/80 bg-gradient-to-tr from-violet-900/40 via-slate-900/80 to-slate-950/90 glow-card">
+          <div className="absolute -top-24 -left-24 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-orange-600/20 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 max-w-3xl mx-auto space-y-6">
             <span className="px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-violet-500/20 text-violet-300 border border-violet-500/40 inline-block">

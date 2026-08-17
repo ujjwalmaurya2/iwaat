@@ -96,7 +96,7 @@ export const generateOrganizationSchema = (customSiteUrl, websiteSettings, conta
 };
 
 /**
- * ProfessionalService / Agency Schema (Legitimate entity representation)
+ * ProfessionalService / LocalBusiness Schema
  */
 export const generateProfessionalServiceSchema = (customSiteUrl, websiteSettings, contactSettings) => {
   const url = customSiteUrl || SEO_CONFIG.siteUrl;
@@ -110,17 +110,17 @@ export const generateProfessionalServiceSchema = (customSiteUrl, websiteSettings
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
     '@id': `${url}/#professionalservice`,
-    name: name,
+    name: `${name} — Web Development & Digital Agency`,
     url: url,
     logo: getAbsoluteImageUrl(SEO_CONFIG.logoUrl),
     image: getAbsoluteImageUrl(SEO_CONFIG.ogImageUrl),
     description:
       websiteSettings?.short_description || SEO_CONFIG.defaultDescription,
     email: email,
-    priceRange: '$$',
+    priceRange: '₹₹',
     areaServed: [
       {
-        '@type': 'AdministrativeArea',
+        '@type': 'City',
         name: 'Prayagraj',
       },
       {
@@ -272,6 +272,39 @@ export const generateProjectsCollectionSchema = (projects = [], customSiteUrl) =
           '@id': `${url}/#organization`,
         },
       })),
+    },
+  };
+};
+
+/**
+ * Article Schema
+ */
+export const generateArticleSchema = (article, customSiteUrl) => {
+  if (!article) return null;
+  const url = customSiteUrl || SEO_CONFIG.siteUrl;
+  const articleUrl = `${url}/resources/${article.slug || article.id}`;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    '@id': `${articleUrl}/#article`,
+    headline: article.title,
+    description: article.metaDescription || article.summary,
+    url: articleUrl,
+    datePublished: article.publishedDate || '2026-08-18',
+    dateModified: article.publishedDate || '2026-08-18',
+    inLanguage: 'en-US',
+    author: {
+      '@type': 'Organization',
+      name: article.author || 'iWAAT Engineering Team',
+      url: url,
+    },
+    publisher: {
+      '@id': `${url}/#organization`,
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': articleUrl,
     },
   };
 };

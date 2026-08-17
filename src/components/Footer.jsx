@@ -96,6 +96,15 @@ export const Footer = () => {
                 <Link to="/process" className="hover:text-violet-400 transition-colors">Our Process</Link>
               </li>
               <li>
+                <Link to="/resources" className="hover:text-violet-400 transition-colors">Resources &amp; Guides</Link>
+              </li>
+              <li>
+                <Link to="/web-development-prayagraj" className="hover:text-violet-400 transition-colors flex items-center gap-1.5">
+                  <span>Prayagraj Web Dev</span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-orange-500/20 text-orange-300">Local</span>
+                </Link>
+              </li>
+              <li>
                 <Link to="/events" className="hover:text-violet-400 transition-colors flex items-center gap-1.5">
                   <span>Events & Sprints</span>
                   <span className="text-[10px] px-1.5 py-0.2 rounded bg-violet-500/20 text-violet-300">New</span>
