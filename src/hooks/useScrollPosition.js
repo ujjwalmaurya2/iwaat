@@ -1,21 +1,43 @@
 import { useState, useEffect } from 'react';
 
-export const useScrollPosition = () => {
-  const [scrollPosition, setScrollPosition] = useState(0);
+/**
+ * High-performance scroll position hook
+ * Only triggers React state updates when the `isScrolled` threshold changes.
+ * Uses requestAnimationFrame and passive event listeners to maintain 60 FPS.
+ */
+export const useScrollPosition = (threshold = 20) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
+    let lastIsScrolled = window.pageYOffset > threshold;
+
+    // Set initial value immediately
+    setIsScrolled(lastIsScrolled);
+
     const updatePosition = () => {
       const currentScroll = window.pageYOffset;
-      setScrollPosition(currentScroll);
-      setIsScrolled(currentScroll > 20);
+      const newIsScrolled = currentScroll > threshold;
+
+      if (newIsScrolled !== lastIsScrolled) {
+        lastIsScrolled = newIsScrolled;
+        setIsScrolled(newIsScrolled);
+      }
+      ticking = false;
     };
 
-    window.addEventListener('scroll', updatePosition, { passive: true });
-    updatePosition();
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updatePosition);
+        ticking = true;
+      }
+    };
 
-    return () => window.removeEventListener('scroll', updatePosition);
-  }, []);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [threshold]);
 
-  return { scrollPosition, isScrolled };
+  return { isScrolled };
 };
+
+export default useScrollPosition;

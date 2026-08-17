@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 
-export const GlassCard = ({
+export const GlassCard = memo(({
   children,
   className = '',
   hoverEffect = true,
@@ -11,10 +11,10 @@ export const GlassCard = ({
 }) => {
   return (
     <motion.div
-      whileHover={hoverEffect ? { y: -6, scale: 1.01 } : {}}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
+      whileHover={hoverEffect ? { y: -4, scale: 1.01 } : {}}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
       onClick={onClick}
-      className={`glass-panel rounded-3xl p-6 md:p-8 transition-all duration-300 relative overflow-hidden ${
+      className={`glass-panel rounded-3xl p-6 md:p-8 transition-shadow duration-300 relative overflow-hidden ${
         glow ? 'glow-card' : ''
       } ${onClick ? 'cursor-pointer' : ''} ${className}`}
       {...props}
@@ -22,4 +22,6 @@ export const GlassCard = ({
       <div className="relative z-10">{children}</div>
     </motion.div>
   );
-};
+});
+
+export default GlassCard;

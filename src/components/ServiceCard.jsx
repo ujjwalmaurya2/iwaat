@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import {
   Code2,
@@ -21,17 +21,17 @@ const iconMap = {
   ShieldCheck,
 };
 
-export const ServiceCard = ({ service, index = 0 }) => {
+export const ServiceCard = memo(({ service, index = 0 }) => {
   const IconComponent = iconMap[service.icon] || Code2;
   const servicePath = `/services/${service.slug || service.id}`;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 25 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      whileHover={{ y: -8 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.45, delay: Math.min(index * 0.08, 0.3) }}
+      whileHover={{ y: -6 }}
       className="glass-panel p-8 rounded-3xl glow-card flex flex-col justify-between h-full group relative overflow-hidden"
     >
       {/* Top Accent Gradient Line */}
@@ -86,4 +86,6 @@ export const ServiceCard = ({ service, index = 0 }) => {
       </div>
     </motion.div>
   );
-};
+});
+
+export default ServiceCard;

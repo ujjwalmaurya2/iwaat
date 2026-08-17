@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Star, Quote } from 'lucide-react';
 import testimonialsData from '../data/testimonials.json';
 
 const row1 = testimonialsData.slice(0, 4);
 const row2 = testimonialsData.slice(4, 8);
 
-const MarqueeCard = ({ testimonial }) => {
+const MarqueeCard = memo(({ testimonial }) => {
   return (
-    <div className="w-[340px] sm:w-[420px] shrink-0 glass-panel p-7 sm:p-8 rounded-3xl glow-card flex flex-col justify-between relative mx-3 group hover:scale-[1.02] transition-transform duration-300">
+    <div className="w-[320px] sm:w-[400px] shrink-0 glass-panel p-6 sm:p-8 rounded-3xl glow-card flex flex-col justify-between relative mx-3 group hover:scale-[1.02] transition-transform duration-300 transform-gpu">
       <Quote className="absolute top-6 right-6 w-10 h-10 text-violet-500/10 dark:text-violet-500/20 pointer-events-none" />
 
       <div>
@@ -30,6 +30,10 @@ const MarqueeCard = ({ testimonial }) => {
           <img
             src={testimonial.avatar}
             alt={testimonial.author}
+            loading="lazy"
+            decoding="async"
+            width="40"
+            height="40"
             className="w-10 h-10 rounded-full object-cover border-2 border-violet-500/40 shadow-md"
           />
           <div>
@@ -48,16 +52,16 @@ const MarqueeCard = ({ testimonial }) => {
       </div>
     </div>
   );
-};
+});
 
-export const TestimonialMarquee = () => {
+export const TestimonialMarquee = memo(() => {
   return (
     <div className="relative w-full overflow-hidden space-y-6 py-4">
       {/* Edge Gradient Mask Overlay */}
       <div className="absolute top-0 bottom-0 left-0 w-16 sm:w-32 bg-gradient-to-r from-white dark:from-[#0B1020] to-transparent z-20 pointer-events-none" />
       <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-32 bg-gradient-to-l from-white dark:from-[#0B1020] to-transparent z-20 pointer-events-none" />
 
-      {/* Row 1: Right to Left (Moving Left) */}
+      {/* Row 1: Right to Left */}
       <div className="flex overflow-hidden group">
         <div className="animate-marquee-left flex">
           {[...row1, ...row1, ...row1].map((item, index) => (
@@ -66,7 +70,7 @@ export const TestimonialMarquee = () => {
         </div>
       </div>
 
-      {/* Row 2: Left to Right (Moving Right) */}
+      {/* Row 2: Left to Right */}
       <div className="flex overflow-hidden group">
         <div className="animate-marquee-right flex">
           {[...row2, ...row2, ...row2].map((item, index) => (
@@ -76,4 +80,6 @@ export const TestimonialMarquee = () => {
       </div>
     </div>
   );
-};
+});
+
+export default TestimonialMarquee;

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 
-export const SectionHeader = ({
+export const SectionHeader = memo(({
   badge,
   title,
   highlight,
@@ -19,10 +19,10 @@ export const SectionHeader = ({
     >
       {badge && (
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
+          initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.4 }}
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-violet-500/10 dark:bg-violet-500/15 border border-violet-500/30 text-violet-600 dark:text-violet-300 mb-4 shadow-sm"
         >
           <span className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
@@ -32,10 +32,10 @@ export const SectionHeader = ({
 
       {title && (
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          transition={{ duration: 0.45, delay: 0.05 }}
           className="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4 leading-tight font-heading"
         >
           {title}{' '}
@@ -49,10 +49,10 @@ export const SectionHeader = ({
 
       {subtitle && (
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.45, delay: 0.1 }}
           className="text-base md:text-lg text-slate-600 dark:text-slate-400 font-normal leading-relaxed"
         >
           {subtitle}
@@ -60,4 +60,6 @@ export const SectionHeader = ({
       )}
     </div>
   );
-};
+});
+
+export default SectionHeader;

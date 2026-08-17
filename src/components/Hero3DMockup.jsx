@@ -1,12 +1,15 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, memo } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { Sparkles, Activity, ShieldCheck, Terminal, Smartphone, Laptop, Layers, TrendingUp } from 'lucide-react';
 
-export const Hero3DMockup = () => {
+export const Hero3DMockup = memo(() => {
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { margin: '100px 0px 100px 0px' });
+
   return (
-    <div className="relative w-full aspect-square max-w-[620px] mx-auto flex items-center justify-center">
+    <div ref={containerRef} className="relative w-full aspect-square max-w-[620px] mx-auto flex items-center justify-center">
       {/* Background Radial Glow */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-violet-600/30 via-orange-500/20 to-pink-500/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
+      <div className="absolute inset-0 bg-gradient-to-tr from-violet-600/30 via-orange-500/20 to-pink-500/20 rounded-full blur-[90px] pointer-events-none" />
 
       {/* Main Container Layer */}
       <div className="relative w-full h-full flex items-center justify-center">
@@ -17,7 +20,7 @@ export const Hero3DMockup = () => {
           animate={{ y: 0, opacity: 1, rotateX: 0 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
           whileHover={{ scale: 1.02, rotateY: -3 }}
-          className="relative z-20 w-[85%] rounded-2xl bg-slate-900 border border-slate-700/80 shadow-2xl p-2 md:p-3 backdrop-blur-xl"
+          className="relative z-20 w-[85%] rounded-2xl bg-slate-900 border border-slate-700/80 shadow-2xl p-2 md:p-3 backdrop-blur-md"
         >
           {/* Laptop Screen Header Dots */}
           <div className="flex items-center gap-1.5 pb-2.5 px-2 border-b border-slate-800">
@@ -87,9 +90,9 @@ export const Hero3DMockup = () => {
 
         {/* 2. Floating Mobile App Screen (Top Left) */}
         <motion.div
-          animate={{ y: [0, -12, 0] }}
+          animate={isInView ? { y: [0, -12, 0] } : { y: 0 }}
           transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-2 -left-4 z-30 w-36 md:w-44 rounded-2xl bg-slate-900/90 border border-violet-500/40 p-2.5 shadow-2xl backdrop-blur-xl"
+          className="absolute top-2 -left-4 z-30 w-36 md:w-44 rounded-2xl bg-slate-900/95 border border-violet-500/40 p-2.5 shadow-2xl backdrop-blur-md"
         >
           <div className="flex items-center gap-1.5 mb-2">
             <Smartphone className="w-3.5 h-3.5 text-violet-400" />
@@ -107,9 +110,9 @@ export const Hero3DMockup = () => {
 
         {/* 3. Floating Code Editor Card (Bottom Right) */}
         <motion.div
-          animate={{ y: [0, 14, 0] }}
+          animate={isInView ? { y: [0, 14, 0] } : { y: 0 }}
           transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-          className="absolute -bottom-2 -right-4 z-30 w-44 md:w-56 rounded-2xl bg-slate-950/90 border border-slate-700/80 p-3 shadow-2xl backdrop-blur-xl font-mono text-[10px]"
+          className="absolute -bottom-2 -right-4 z-30 w-44 md:w-56 rounded-2xl bg-slate-950/95 border border-slate-700/80 p-3 shadow-2xl backdrop-blur-md font-mono text-[10px]"
         >
           <div className="flex items-center gap-1.5 text-slate-400 mb-2 pb-1.5 border-b border-slate-800">
             <Terminal className="w-3.5 h-3.5 text-emerald-400" />
@@ -131,9 +134,9 @@ export const Hero3DMockup = () => {
 
         {/* 4. Floating Marketing ROI Pill (Top Right) */}
         <motion.div
-          animate={{ x: [0, 10, 0], y: [0, -8, 0] }}
+          animate={isInView ? { x: [0, 10, 0], y: [0, -8, 0] } : { x: 0, y: 0 }}
           transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-          className="absolute top-10 -right-6 z-30 px-3.5 py-2 rounded-2xl bg-gradient-to-r from-orange-500/90 to-amber-500/90 text-white shadow-lg backdrop-blur-md flex items-center gap-2 border border-orange-400/40"
+          className="absolute top-10 -right-6 z-30 px-3.5 py-2 rounded-2xl bg-gradient-to-r from-orange-500/90 to-amber-500/90 text-white shadow-lg backdrop-blur-sm flex items-center gap-2 border border-orange-400/40"
         >
           <TrendingUp className="w-4 h-4 text-white" />
           <div>
@@ -144,9 +147,9 @@ export const Hero3DMockup = () => {
 
         {/* 5. Floating Trust & Security Badge (Bottom Left) */}
         <motion.div
-          animate={{ x: [0, -8, 0], y: [0, 10, 0] }}
+          animate={isInView ? { x: [0, -8, 0], y: [0, 10, 0] } : { x: 0, y: 0 }}
           transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
-          className="absolute bottom-6 -left-6 z-30 px-3.5 py-2 rounded-2xl bg-slate-900/90 border border-emerald-500/40 text-emerald-400 shadow-lg backdrop-blur-md flex items-center gap-2"
+          className="absolute bottom-6 -left-6 z-30 px-3.5 py-2 rounded-2xl bg-slate-900/95 border border-emerald-500/40 text-emerald-400 shadow-lg backdrop-blur-sm flex items-center gap-2"
         >
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
           <span className="text-xs font-semibold text-slate-200">100% Secure & Scalable</span>
@@ -155,4 +158,6 @@ export const Hero3DMockup = () => {
       </div>
     </div>
   );
-};
+});
+
+export default Hero3DMockup;

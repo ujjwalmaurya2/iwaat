@@ -1,27 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 
-export const ScrollToTop = () => {
+export const ScrollToTop = memo(() => {
   const { pathname } = useLocation();
   const [isVisible, setIsVisible] = useState(false);
 
+  // Instant scroll to top on route change to prevent layout shift & animation fighting
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, [pathname]);
 
+  // Throttled scroll listener for back-to-top button
   useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.pageYOffset > 400) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
+    let ticking = false;
+    let lastVisible = false;
+
+    const checkVisibility = () => {
+      const shouldBeVisible = window.pageYOffset > 400;
+      if (shouldBeVisible !== lastVisible) {
+        lastVisible = shouldBeVisible;
+        setIsVisible(shouldBeVisible);
+      }
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(checkVisibility);
+        ticking = true;
       }
     };
 
-    window.addEventListener('scroll', toggleVisibility);
-    return () => window.removeEventListener('scroll', toggleVisibility);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   const scrollToTop = () => {
@@ -38,7 +51,7 @@ export const ScrollToTop = () => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
-          whileHover={{ scale: 1.15, y: -2 }}
+          whileHover={{ scale: 1.1, y: -2 }}
           whileTap={{ scale: 0.9 }}
           onClick={scrollToTop}
           aria-label="Scroll to top"
@@ -49,4 +62,6 @@ export const ScrollToTop = () => {
       )}
     </AnimatePresence>
   );
-};
+});
+
+export default ScrollToTop;
