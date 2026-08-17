@@ -1,4 +1,17 @@
 {
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "iwaat.in"
+        }
+      ],
+      "destination": "https://www.iwaat.in/:path*",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",
@@ -6,6 +19,15 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(robots\\.txt|sitemap\\.xml|site\\.webmanifest)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=3600"
         }
       ]
     },
@@ -58,7 +80,7 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!assets/|favicon\\.ico|.*\\.js|.*\\.css|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.svg|.*\\.webp|.*\\.woff|.*\\.woff2).*)",
+      "source": "/((?!assets/|robots\\.txt|sitemap\\.xml|site\\.webmanifest|favicon\\.ico|.*\\.txt|.*\\.xml|.*\\.webmanifest|.*\\.js|.*\\.css|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.svg|.*\\.webp|.*\\.woff|.*\\.woff2).*)",
       "destination": "/index.html"
     }
   ]

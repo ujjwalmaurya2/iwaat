@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
+import { SEO } from '../components/SEO';
+import { getCanonicalUrl } from '../config/seo';
 import { SectionHeader } from '../components/SectionHeader';
 import { ProjectCard } from '../components/ProjectCard';
 import { useCMS } from '../cms/cmsContext';
-import { Sparkles } from 'lucide-react';
+import { generateProjectsCollectionSchema, generateBreadcrumbSchema } from '../utils/seoSchema';
 
 export const Projects = () => {
   const { projects, categories: dbCategories } = useCMS();
@@ -27,8 +30,21 @@ export const Projects = () => {
             p.categorySlug === activeCategory.toLowerCase()
         );
 
+  const projectsSchema = generateProjectsCollectionSchema(publishedProjects);
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Projects', path: '/projects' },
+  ]);
+
   return (
     <div className="pt-24 md:pt-36 pb-20 space-y-16">
+      {/* Dynamic SEO Meta & Schema */}
+      <SEO
+        title="Selected Portfolio & Case Studies — Live Deployed Web Applications | iWAAT"
+        description="Explore live case studies of web applications, healthcare platforms, NGO portals, photography experiences, and e-commerce stores engineered by iWAAT."
+        canonicalUrl={getCanonicalUrl('/projects')}
+        schema={[projectsSchema, breadcrumbSchema]}
+      />
+
       {/* Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <SectionHeader
@@ -84,3 +100,5 @@ export const Projects = () => {
     </div>
   );
 };
+
+export default Projects;

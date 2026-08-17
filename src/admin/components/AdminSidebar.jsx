@@ -11,6 +11,7 @@ import {
   Inbox,
   PhoneCall,
   Settings,
+  Globe,
   Activity,
   LogOut,
   ExternalLink,
@@ -38,6 +39,7 @@ export const AdminSidebar = ({ mobileOpen, closeMobile }) => {
     { label: 'Client Inquiries', path: '/super-admin/inquiries', icon: Inbox, badge: unreadInquiries, badgeColor: 'bg-violet-600' },
     { label: 'Contact Settings', path: '/super-admin/contact', icon: PhoneCall },
     { label: 'Website Settings', path: '/super-admin/settings', icon: Settings },
+    { label: 'SEO & Visibility', path: '/super-admin/seo-health', icon: Globe },
     { label: 'Audit Activity', path: '/super-admin/activity', icon: Activity },
   ];
 

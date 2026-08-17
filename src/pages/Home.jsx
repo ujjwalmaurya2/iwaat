@@ -24,9 +24,18 @@ import { TestimonialMarquee } from '../components/TestimonialMarquee';
 import { ContactForm } from '../components/ContactForm';
 import { MagneticButton } from '../components/MagneticButton';
 import { useCMS } from '../cms/cmsContext';
+import { SEO } from '../components/SEO';
+import { getCanonicalUrl } from '../config/seo';
+import {
+  generateWebSiteSchema,
+  generateOrganizationSchema,
+  generateProfessionalServiceSchema,
+  generateFAQSchema,
+} from '../utils/seoSchema';
 
 import fallbackTechnologies from '../data/technologies.json';
 import fallbackCompany from '../data/company.json';
+import fallbackFaqs from '../data/faqs.json';
 
 export const Home = () => {
   const { projects, services, contactSettings, websiteSettings } = useCMS();
@@ -41,8 +50,25 @@ export const Home = () => {
   const contactLocation = contactSettings?.location || fallbackCompany.contactInfo.location;
   const contactHours = contactSettings?.working_hours || fallbackCompany.contactInfo.workingHours;
 
+  const websiteSchema = generateWebSiteSchema();
+  const orgSchema = generateOrganizationSchema(null, websiteSettings, contactSettings);
+  const serviceEntitySchema = generateProfessionalServiceSchema(null, websiteSettings, contactSettings);
+  const faqSchema = generateFAQSchema(fallbackFaqs);
+
   return (
     <div className="space-y-24 md:space-y-32 pb-16">
+      {/* Dynamic SEO Meta & Schema.org Graph */}
+      <SEO
+        title={websiteSettings?.seo_title || 'iWAAT — Web Design, Web Development & Digital Agency'}
+        description={
+          websiteSettings?.seo_description ||
+          websiteSettings?.short_description ||
+          fallbackCompany.shortDescription
+        }
+        canonicalUrl={getCanonicalUrl('/')}
+        schema={[websiteSchema, orgSchema, serviceEntitySchema, faqSchema]}
+      />
+
       {/* HERO SECTION */}
       <section className="relative min-h-[90vh] flex items-center justify-center pt-24 md:pt-36 pb-16 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">

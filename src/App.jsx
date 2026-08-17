@@ -8,6 +8,7 @@ import { RootLayout } from './layouts/RootLayout';
 // Public Pages
 import { Home } from './pages/Home';
 import { Services } from './pages/Services';
+import { ServiceDetail } from './pages/ServiceDetail';
 import { Projects } from './pages/Projects';
 import { About } from './pages/About';
 import { Process } from './pages/Process';
@@ -32,6 +33,7 @@ import { InquiryDetailPage } from './admin/pages/InquiryDetailPage';
 import { ContactSettings } from './admin/pages/ContactSettings';
 import { WebsiteSettings } from './admin/pages/WebsiteSettings';
 import { AuditActivity } from './admin/pages/AuditActivity';
+import { SEOHealth } from './admin/pages/SEOHealth';
 
 export function App() {
   return (
@@ -44,6 +46,7 @@ export function App() {
               <Route path="/" element={<RootLayout />}>
                 <Route index element={<Home />} />
                 <Route path="services" element={<Services />} />
+                <Route path="services/:slug" element={<ServiceDetail />} />
                 <Route path="projects" element={<Projects />} />
                 <Route path="about" element={<About />} />
                 <Route path="process" element={<Process />} />
@@ -77,6 +80,7 @@ export function App() {
                 <Route path="inquiries/:id" element={<InquiryDetailPage />} />
                 <Route path="contact" element={<ContactSettings />} />
                 <Route path="settings" element={<WebsiteSettings />} />
+                <Route path="seo-health" element={<SEOHealth />} />
                 <Route path="activity" element={<AuditActivity />} />
               </Route>
             </Routes>

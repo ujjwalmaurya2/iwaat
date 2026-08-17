@@ -3,114 +3,346 @@
     "id": "web-development",
     "title": "Web Development",
     "slug": "web-development",
-    "shortDescription": "High-performance, responsive websites and web portals built with cutting-edge tech stacks.",
-    "description": "We engineer high-speed, modern, SEO-optimized web applications and portals for businesses, NGOs, healthcare institutions, and digital brands. Our focus is on visual excellence, performance, and conversion-driven architecture.",
-    "icon": "Code2",
     "badge": "Core Expertise",
-    "features": [
-      "Business & Corporate Websites",
-      "NGO & Non-Profit Portals",
-      "Healthcare Platforms & Dashboards",
-      "E-commerce Storefronts & Catalogues",
-      "High-Converting Landing Pages",
-      "Portfolio & Storytelling Sites"
+    "icon": "Code2",
+    "shortDescription": "High-performance, responsive websites, e-commerce stores, and web portals engineered with modern tech stacks.",
+    "description": "We engineer high-speed, modern, SEO-optimized web applications and portals for businesses, NGOs, healthcare institutions, and digital brands. Our focus is on visual excellence, sub-second load times, mobile-first responsiveness, and conversion-driven architecture.",
+    "metaTitle": "Web Development & Custom Website Design Services",
+    "metaDescription": "Custom website development, business portals, and e-commerce platforms built with React, Vite, and Tailwind CSS for businesses across India, Prayagraj, and global clients.",
+    "gradient": "from-violet-600 to-indigo-600",
+    "problemsSolved": [
+      "Slow, outdated legacy websites that lose prospective customers and fail Core Web Vitals",
+      "Poor mobile responsiveness causing dropped conversions on mobile and tablet devices",
+      "Weak semantic structure, missing metadata, and poor organic Google rankings",
+      "Lack of clean content management or modern administrative dashboards"
     ],
-    "deliverables": ["Responsive Web App", "Custom UI Components", "SEO Foundation", "Performance Audit", "CMS / Admin Integration"],
-    "gradient": "from-violet-600 to-indigo-600"
+    "features": [
+      "Custom Business & Corporate Websites",
+      "E-Commerce Storefronts & Online Catalogs",
+      "NGO & Non-Profit Public Portals",
+      "Healthcare Platforms & Appointment Booking Interfaces",
+      "High-Converting Landing Pages & Campaign Micro-sites",
+      "Interactive Portfolios & Visual Storytelling Websites"
+    ],
+    "benefits": [
+      "Sub-second load times and optimized Lighthouse metrics",
+      "Fully responsive fluid grid systems from 320px smartphones to 4K displays",
+      "Engineered with clean semantic HTML5, Schema.org markup, and technical SEO defaults",
+      "Modular component architecture for effortless future feature expansion"
+    ],
+    "technologies": ["React 19", "Vite", "Tailwind CSS", "Framer Motion", "JavaScript", "HTML5/CSS3"],
+    "deliverables": [
+      "Production-Ready Responsive Web Application",
+      "Custom UI Component Library",
+      "Technical SEO & Schema.org Foundation",
+      "Cross-Browser & Mobile Compatibility Audit",
+      "Content Management / Admin Panel Integration"
+    ],
+    "process": [
+      { "step": "01", "name": "Discovery & Architecture", "desc": "Mapping user journeys, sitemap hierarchy, and core technical requirements." },
+      { "step": "02", "name": "UI/UX System Design", "desc": "Prototyping responsive layouts with clean typography and luxury visual hierarchy." },
+      { "step": "03", "name": "Engineering & Development", "desc": "Building modular, type-safe, and lightning-fast frontend components." },
+      { "step": "04", "name": "Performance & SEO QA", "desc": "Auditing Core Web Vitals, accessibility, semantic tags, and cross-device testing." },
+      { "step": "05", "name": "Deployment & Handover", "desc": "Cloud deployment, SSL hardening, domain routing, and client training." }
+    ],
+    "faqs": [
+      {
+        "question": "What technologies do you use to build websites at iWAAT?",
+        "answer": "We primarily build modern, high-performance web applications using React 19, Vite, Tailwind CSS, and Framer Motion. This modern frontend stack ensures sub-second page loads, fluid micro-interactions, and exceptional maintainability compared to monolithic legacy platforms."
+      },
+      {
+        "question": "How do you ensure iWAAT websites are optimized for search engines?",
+        "answer": "Every website we engineer includes clean semantic HTML5 markup, structured Schema.org JSON-LD data, dynamic canonical URLs, optimized Open Graph cards, fast Core Web Vitals, and mobile-first responsive design right out of the box."
+      },
+      {
+        "question": "Can iWAAT build e-commerce and custom booking systems?",
+        "answer": "Yes. We engineer both e-commerce product storefronts and custom service booking workflows with secure payment gateways, inventory catalogs, and administrative order management."
+      }
+    ]
   },
   {
     "id": "software-development",
     "title": "Software Development",
     "slug": "software-development",
-    "shortDescription": "Custom software solutions, CRM systems, and scalable enterprise web platforms.",
-    "description": "From custom internal business tools to full-fledged multi-tenant SaaS applications, we architect robust software tailored to complex business workflows and data-driven demands.",
-    "icon": "Cpu",
     "badge": "Scalable Tech",
-    "features": [
-      "Custom Web Applications",
-      "Admin & Analytics Dashboards",
-      "CRM & Client Management Systems",
-      "ERP Solutions & Workflows",
-      "Internal Business Tools",
-      "Process Automation Platforms"
+    "icon": "Cpu",
+    "shortDescription": "Custom software solutions, CRM systems, web applications, and scalable enterprise cloud platforms.",
+    "description": "From custom internal business tools to full-fledged multi-tenant SaaS platforms, we architect robust software tailored to complex business workflows and data-driven demands with rock-solid security.",
+    "metaTitle": "Custom Software Development & Web Applications",
+    "metaDescription": "Scalable custom software development, internal CRM/ERP tools, administrative dashboards, and database applications engineered for modern business efficiency.",
+    "gradient": "from-indigo-600 to-cyan-500",
+    "problemsSolved": [
+      "Manual, disconnected business workflows that cause data loss and operational bottlenecks",
+      "Off-the-shelf software limitations that fail to match proprietary business logic",
+      "Insecure, unscalable database structures that buckle under expanding user traffic",
+      "Lack of real-time administrative visibility into business KPIs and client inquiries"
     ],
-    "deliverables": ["Scalable API Architecture", "Database Schema Design", "Role-Based Security", "User Permissions", "Cloud Deployment"],
-    "gradient": "from-indigo-600 to-cyan-500"
+    "features": [
+      "Custom Web Applications & SaaS MVPs",
+      "Admin & Real-time Analytics Dashboards",
+      "CRM & Client Management Systems",
+      "ERP Solutions & Custom Operational Workflows",
+      "Internal Business Tools & Automation Utilities",
+      "Database Modeling & Cloud API Integrations"
+    ],
+    "benefits": [
+      "Tailored precisely to your proprietary operational workflows",
+      "Role-based access control and robust data encryption",
+      "Automated state persistence with cloud and offline sync capabilities",
+      "Clean API integrations with third-party payment, messaging, and cloud providers"
+    ],
+    "technologies": ["React", "Supabase", "PostgreSQL", "REST APIs", "Dexie IndexedDB", "Vercel / Cloud"],
+    "deliverables": [
+      "Scalable Software Architecture Blueprint",
+      "Database Schema & Row-Level Security Rules",
+      "Admin Dashboard with Role-Based Permissions",
+      "Automated Audit Logging & Activity Trails",
+      "Cloud Deployment & Continuous Integration Setup"
+    ],
+    "process": [
+      { "step": "01", "name": "Requirements Engineering", "desc": "Analyzing operational workflows, user roles, and data relationship models." },
+      { "step": "02", "name": "Schema & API Architecture", "desc": "Designing relational schemas, security policies, and endpoint specifications." },
+      { "step": "03", "name": "Frontend & State Layer", "desc": "Developing reactive dashboards, state managers, and data grids." },
+      { "step": "04", "name": "Security & Stress Testing", "desc": "Validating authentication, RLS boundaries, input sanitation, and load testing." },
+      { "step": "05", "name": "Production Launch & Support", "desc": "Deploying with zero-downtime migrations and ongoing monitoring." }
+    ],
+    "faqs": [
+      {
+        "question": "What is the difference between a website and a custom web application?",
+        "answer": "A website is primarily designed for informational, branding, and content delivery purposes. A web application is an interactive software tool that handles complex user authentication, dynamic data manipulation, business workflows, custom dashboards, and database transactions."
+      },
+      {
+        "question": "How do you ensure data security in custom software?",
+        "answer": "We enforce industry-standard security practices including strict Row-Level Security (RLS) policies, encrypted sessions, Content Security Policies (CSP), parameterized database queries, and role-based access controls."
+      }
+    ]
   },
   {
     "id": "ui-ux-design",
     "title": "UI/UX Design",
     "slug": "ui-ux-design",
-    "shortDescription": "User-centric interface design, interactive prototypes, and comprehensive design systems.",
-    "description": "We craft modern, intuitive, and conversion-focused user interfaces that leave lasting impressions. Every pixel, transition, and micro-interaction is intentionally designed for maximum clarity and user delight.",
-    "icon": "Layout",
     "badge": "Design Excellence",
-    "features": [
-      "Web & Mobile UI Design",
-      "Design Systems & Pattern Libraries",
-      "Interactive Wireframes & Prototypes",
-      "User Research & Journey Mapping",
-      "Brand Experience Design",
-      "Usability Audits & Redesigns"
+    "icon": "Layout",
+    "shortDescription": "User-centric interface design, interactive prototypes, design systems, and conversion-focused UX.",
+    "description": "We craft modern, intuitive, and conversion-focused user interfaces that leave lasting impressions. Every pixel, transition, and micro-interaction is intentionally designed for maximum clarity, accessibility, and user delight.",
+    "metaTitle": "UI/UX Design & User Interface Prototyping",
+    "metaDescription": "User-centric UI/UX design, interactive Figma prototypes, design systems, and conversion-focused visual architectures for web and mobile products.",
+    "gradient": "from-purple-500 to-pink-500",
+    "problemsSolved": [
+      "Confusing user navigation leading to high bounce rates and abandoned checkouts",
+      "Cluttered, uninspired visual design that fails to build credibility with customers",
+      "Inconsistent typography, color palettes, and component states across screens",
+      "Lack of interactive prototypes before investing in full-scale code development"
     ],
-    "deliverables": ["Figma Design Files", "Design Tokens", "Interactive Prototypes", "Component Specs", "Micro-animations Guide"],
-    "gradient": "from-purple-500 to-pink-500"
+    "features": [
+      "Web & Mobile Application UI Design",
+      "Design Systems & Reusable Component Libraries",
+      "Interactive High-Fidelity Prototypes",
+      "User Journey Mapping & Wireframing",
+      "Brand Experience & Visual Elevation",
+      "Usability Audits & Conversion Rate Optimization (CRO)"
+    ],
+    "benefits": [
+      "Significantly improved user retention and conversion metrics",
+      "A cohesive design language that elevates brand perceived value",
+      "Tested user flows that eliminate friction across booking and purchase steps",
+      "Pixel-perfect specifications that accelerate developer implementation"
+    ],
+    "technologies": ["Figma", "Framer Motion", "Design Tokens", "Tailwind CSS", "Lucide Icons"],
+    "deliverables": [
+      "Complete Figma Source Files & Component System",
+      "Interactive Clickable Prototype",
+      "Design Tokens (Colors, Typography, Spacing, Shadows)",
+      "Micro-interaction & Animation Guidelines",
+      "Developer Handoff Specifications"
+    ],
+    "process": [
+      { "step": "01", "name": "User Research & Analysis", "desc": "Understanding target audience expectations, competitor landscape, and brand vision." },
+      { "step": "02", "name": "Wireframing & Flow Mapping", "desc": "Structuring low-fidelity layouts and frictionless navigation hierarchies." },
+      { "step": "03", "name": "High-Fidelity Visual Design", "desc": "Applying modern aesthetics, glassmorphism, depth, and curated typography." },
+      { "step": "04", "name": "Interactive Prototyping", "desc": "Simulating realistic user journeys, modal transitions, and responsive behaviors." },
+      { "step": "05", "name": "Design System Specs", "desc": "Packaging components, tokens, and asset guides for engineering execution." }
+    ],
+    "faqs": [
+      {
+        "question": "What deliverables do clients receive from UI/UX engagements?",
+        "answer": "Clients receive full Figma project files, interactive clickable prototypes, a structured design system with typography and color tokens, component variant libraries, and export-ready SVG/PNG graphical assets."
+      },
+      {
+        "question": "Do you design for both mobile and desktop screens?",
+        "answer": "Yes. We follow a strict mobile-first design process, designing dedicated views for smartphones (375px+), tablets (768px+), laptops (1024px+), and wide desktop displays (1440px+)."
+      }
+    ]
   },
   {
     "id": "digital-marketing",
     "title": "Digital Marketing & SEO",
     "slug": "digital-marketing",
-    "shortDescription": "Data-driven marketing campaigns, technical SEO, and organic growth strategies.",
-    "description": "Accelerate your market reach and lead generation with search engine optimization, paid advertising, and social media campaigns engineered for measurable ROI.",
-    "icon": "TrendingUp",
     "badge": "Growth Engine",
-    "features": [
-      "Technical & Local SEO Optimization",
-      "Social Media Marketing & Management",
-      "Performance Marketing & Paid Ads",
-      "Google Ads & PPC Campaigns",
-      "Content Strategy & Copywriting",
-      "Brand Campaigns & Lead Generation"
+    "icon": "TrendingUp",
+    "shortDescription": "Data-driven marketing campaigns, technical SEO, Google Ads, and organic search visibility strategies.",
+    "description": "Accelerate your market reach and qualified lead generation with technical search engine optimization, paid advertising campaigns, and social media strategies engineered for measurable return on investment.",
+    "metaTitle": "Digital Marketing, SEO & Google Ads Growth Services",
+    "metaDescription": "Results-oriented technical SEO, Google Ads PPC management, social media marketing, and organic search visibility strategies for growing businesses.",
+    "gradient": "from-orange-500 to-amber-500",
+    "problemsSolved": [
+      "Low search engine visibility preventing target customers from discovering your business",
+      "Wasted advertising spend on poorly targeted Google Ads and social media campaigns",
+      "Lack of proper conversion tracking and analytics to measure marketing ROI",
+      "Weak local search presence for geographic service searches"
     ],
-    "deliverables": ["SEO Audit Report", "Keyword Strategy", "Ad Campaign Setup", "Monthly Analytics Dashboard", "Growth Roadmap"],
-    "gradient": "from-orange-500 to-amber-500"
+    "features": [
+      "Technical, On-Page & Schema SEO Optimization",
+      "Local SEO & Geographic Search Optimization",
+      "Google Ads (Search, Display & Performance Max)",
+      "Social Media Advertising & Brand Awareness",
+      "Content Strategy & Search Intent Copywriting",
+      "Conversion Rate Optimization (CRO) & Funnel Tracking"
+    ],
+    "benefits": [
+      "Sustainable organic search traffic growth without ongoing ad dependency",
+      "Highly targeted PPC ad campaigns designed to maximize cost-per-acquisition",
+      "Comprehensive tracking of phone calls, form inquiries, and goal conversions",
+      "Entity and Schema.org optimization for modern AI answer engines"
+    ],
+    "technologies": ["Google Search Console", "Google Analytics 4", "Schema.org", "Meta Ads", "Google Ads"],
+    "deliverables": [
+      "Comprehensive SEO Technical Audit Report",
+      "Targeted Keyword & Search Intent Strategy",
+      "Structured Data & Schema.org Implementation",
+      "PPC Campaign Architecture & Copywriting",
+      "Monthly Performance & Analytics Dashboard"
+    ],
+    "process": [
+      { "step": "01", "name": "SEO & Market Audit", "desc": "Auditing current indexability, search presence, technical roadblocks, and competitor positioning." },
+      { "step": "02", "name": "Keyword & Intent Mapping", "desc": "Identifying high-intent commercial and local search queries for your target market." },
+      { "step": "03", "name": "On-Page & Technical SEO", "desc": "Optimizing metadata, heading tags, canonicals, site speed, and Schema.org structured data." },
+      { "step": "04", "name": "Campaign Launch & Ads Setup", "desc": "Deploying conversion-optimized ad campaigns with precise audience parameters." },
+      { "step": "05", "name": "Iterative Optimization", "desc": "Monitoring search console trends, user dwell time, and refining ad bids for maximum ROI." }
+    ],
+    "faqs": [
+      {
+        "question": "How long does it take to see results from SEO?",
+        "answer": "SEO is a medium to long-term organic growth strategy. While technical fixes and indexing optimizations take effect within weeks, significant organic keyword ranking gains typically develop over 3 to 6 months as domain authority and topical depth increase."
+      },
+      {
+        "question": "Do you set up analytics and conversion tracking?",
+        "answer": "Yes. We configure Google Analytics 4, Google Search Console, and custom event tracking so you have transparent visibility into incoming leads, traffic channels, and user engagement."
+      }
+    ]
   },
   {
     "id": "branding",
     "title": "Branding & Identity",
     "slug": "branding",
-    "shortDescription": "Distinctive brand identities, logos, visual systems, and marketing collateral.",
-    "description": "We create memorable visual identities that stand out in crowded markets. From initial concept and logo design to complete brand guidelines and digital marketing assets.",
-    "icon": "Sparkles",
     "badge": "Creative Identity",
-    "features": [
-      "Logo Design & Vector Assets",
-      "Brand Guidelines & Style Guides",
-      "Visual Identity Systems",
-      "Marketing Creatives & Social Kits",
-      "Product Packaging Design",
-      "Business Cards & Collateral"
+    "icon": "Sparkles",
+    "shortDescription": "Distinctive brand identities, logos, visual systems, brand guidelines, and marketing collateral.",
+    "description": "We create memorable visual identities that stand out in crowded markets. From initial conceptualization and vector logo design to complete brand guideline systems and marketing collateral.",
+    "metaTitle": "Brand Identity Design & Visual Systems",
+    "metaDescription": "Distinctive logo design, brand style guides, visual identity systems, and digital marketing collateral that establish strong market authority.",
+    "gradient": "from-pink-500 to-rose-500",
+    "problemsSolved": [
+      "Inconsistent visual presentation that dilutes brand trust across marketing channels",
+      "Outdated or generic logo marks that fail to stand out from market competitors",
+      "Lack of clear brand guidelines for internal teams and marketing partners",
+      "Missing high-resolution vector assets for print and digital publishing"
     ],
-    "deliverables": ["Logo Vector Files", "Brand Style Guide", "Color Palette & Typography Specs", "Social Media Templates", "Brand Asset Kit"],
-    "gradient": "from-pink-500 to-rose-500"
+    "features": [
+      "Logo Design & Multi-Format Vector Assets",
+      "Comprehensive Brand Style Guides & Rulebooks",
+      "Color Palettes & Curated Typography Pairings",
+      "Digital Marketing Creatives & Social Media Kits",
+      "Brand Lockups & Favicon / App Icon Sets",
+      "Business Stationery & Collateral Guidelines"
+    ],
+    "benefits": [
+      "Instant market recognition and visual credibility",
+      "Uniform brand consistency across web, social media, print, and advertising",
+      "Comprehensive style guide that empowers your team to produce on-brand materials",
+      "Scalable vector assets ready for digital screens and large-format physical signage"
+    ],
+    "technologies": ["Adobe Illustrator", "Figma", "Vector SVG", "Typography Systems"],
+    "deliverables": [
+      "Primary & Secondary Vector Logo Files (SVG, PNG, PDF, EPS)",
+      "Comprehensive Brand Style Guide (PDF)",
+      "Color Palette Specifications (HEX, RGB, CMYK)",
+      "Typography Pairing Hierarchy & Font Licensing Guide",
+      "Social Media Profile Avatars & Banner Kit"
+    ],
+    "process": [
+      { "step": "01", "name": "Brand Discovery", "desc": "Uncovering core brand values, mission, audience demographics, and market personality." },
+      { "step": "02", "name": "Moodboarding & Concepts", "desc": "Exploring distinct visual directions, typography styles, and aesthetic themes." },
+      { "step": "03", "name": "Vector Refinement", "desc": "Crafting the chosen logo mark with geometric balance and scalable proportions." },
+      { "step": "04", "name": "Style Guide Synthesis", "desc": "Defining strict rules for color palettes, spacing, typography, and logo usage." },
+      { "step": "05", "name": "Asset Packaging", "desc": "Exporting full asset libraries optimized for digital web apps, social media, and print." }
+    ],
+    "faqs": [
+      {
+        "question": "What formats are provided for the finalized logo?",
+        "answer": "You receive full vector files (SVG, PDF, EPS) that scale infinitely without quality loss, along with high-resolution transparent PNGs and JPEGs formatted for dark and light backgrounds."
+      },
+      {
+        "question": "Can you refresh an existing company logo without starting from scratch?",
+        "answer": "Yes. We frequently perform modern brand refreshes that preserve existing brand recognition while modernizing typography, proportions, and digital versatility."
+      }
+    ]
   },
   {
     "id": "maintenance-support",
     "title": "Maintenance & Growth",
     "slug": "maintenance-support",
-    "shortDescription": "24/7 technical support, security hardening, continuous updates, and speed optimization.",
-    "description": "Ensure your digital assets remain secure, blazingly fast, and updated. We provide continuous maintenance, hosting advisory, security patches, and feature iteration.",
-    "icon": "ShieldCheck",
     "badge": "Reliable Partner",
-    "features": [
-      "Ongoing Website Maintenance",
-      "Speed & Core Web Vitals Optimization",
-      "Security Audits & Patch Updates",
-      "Cloud Hosting Support & Management",
-      "Analytics Tracking & Event Setup",
-      "Continuous UI & Feature Upgrades"
+    "icon": "ShieldCheck",
+    "shortDescription": "24/7 technical support, security hardening, continuous updates, and speed optimization.",
+    "description": "Ensure your digital assets remain secure, blazingly fast, and continuously updated. We provide proactive website maintenance, cloud hosting support, security patches, and ongoing feature development.",
+    "metaTitle": "Website Maintenance, Security & Support Services",
+    "metaDescription": "Proactive website maintenance, 24/7 technical support, security patches, Core Web Vitals speed optimization, and ongoing feature enhancements.",
+    "gradient": "from-emerald-500 to-teal-500",
+    "problemsSolved": [
+      "Unmonitored downtime and unexpected website crashes that harm customer trust",
+      "Accumulated technical debt and unpatched security vulnerabilities",
+      "Degrading page load speeds due to unoptimized assets and database bloat",
+      "Lack of an on-call developer to handle urgent content updates or feature tweaks"
     ],
-    "deliverables": ["Uptime Monitoring", "Security Scans", "Speed Optimization", "Monthly Maintenance Report", "Priority Dev Support"],
-    "gradient": "from-emerald-500 to-teal-500"
+    "features": [
+      "Continuous Website Health & Uptime Monitoring",
+      "Core Web Vitals & Page Speed Optimization",
+      "Security Audits, Patching & CSP Hardening",
+      "Cloud Hosting & Domain DNS Management",
+      "Content & Component Updates on Demand",
+      "Monthly Performance, Analytics & SEO Health Reports"
+    ],
+    "benefits": [
+      "Peace of mind knowing your digital presence is monitored 24/7",
+      "Maintained sub-second load times that keep conversion rates high",
+      "Protection against security vulnerabilities and unauthorized tampering",
+      "Direct developer access for rapid feature tweaks and content updates"
+    ],
+    "technologies": ["Vercel", "Supabase", "Lighthouse", "Uptime Monitors", "SSL/TLS", "Git"],
+    "deliverables": [
+      "24/7 Automated Uptime & Error Alerting",
+      "Routine Dependency & Security Patching",
+      "Ongoing Core Web Vitals Speed Tuning",
+      "Monthly Maintenance & Growth Summary Report",
+      "Priority Developer Support Response Channel"
+    ],
+    "process": [
+      { "step": "01", "name": "Baseline Infrastructure Audit", "desc": "Reviewing existing codebase, hosting configuration, SSL certificates, and performance bottlenecks." },
+      { "step": "02", "name": "Monitoring Setup", "desc": "Configuring automated uptime checks, error tracking, and response protocols." },
+      { "step": "03", "name": "Routine Maintenance", "desc": "Applying security updates, asset optimization, and continuous backups on schedule." },
+      { "step": "04", "name": "On-Demand Enhancements", "desc": "Implementing requested UI refinements, content additions, and new feature modules." },
+      { "step": "05", "name": "Monthly Reporting", "desc": "Delivering transparent reports on uptime, speed metrics, traffic trends, and recommendations." }
+    ],
+    "faqs": [
+      {
+        "question": "What is covered in an ongoing maintenance agreement?",
+        "answer": "Our maintenance plans cover 24/7 uptime monitoring, security updates, continuous speed optimization, regular database backups, bug resolution, and allocated developer hours for new content or feature requests."
+      },
+      {
+        "question": "How quickly does the iWAAT team respond to emergency support requests?",
+        "answer": "For critical production issues (such as site downtime or broken payment/booking flows), we maintain an emergency response window to resolve issues swiftly."
+      }
+    ]
   }
 ]

@@ -1,0 +1,60 @@
+# ==========================================
+# iWAAT Digital Services — Robots.txt
+# Official Production: https://www.iwaat.in/
+# ==========================================
+
+User-agent: *
+Allow: /
+Allow: /services
+Allow: /services/*
+Allow: /projects
+Allow: /about
+Allow: /process
+Allow: /events
+Allow: /contact
+Allow: /assets/
+Allow: /*.js$
+Allow: /*.css$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.svg$
+Allow: /*.webp$
+Allow: /*.woff$
+Allow: /*.woff2$
+Allow: /favicon.png
+Allow: /logo.png
+Allow: /og-image.png
+Allow: /site.webmanifest
+
+# Disallow Super Admin & Private Endpoints
+Disallow: /super-admin/
+Disallow: /super-admin/*
+
+# Search & AI Engine Crawlers
+User-agent: Googlebot
+Allow: /
+Disallow: /super-admin/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /super-admin/
+
+User-agent: Applebot
+Allow: /
+Disallow: /super-admin/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /super-admin/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /super-admin/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /super-admin/
+
+# Official Production Sitemap Declaration
+Sitemap: https://www.iwaat.in/sitemap.xml

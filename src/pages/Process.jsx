@@ -2,12 +2,36 @@ import React from 'react';
 import { SectionHeader } from '../components/SectionHeader';
 import { ProcessTimeline } from '../components/ProcessTimeline';
 import { MagneticButton } from '../components/MagneticButton';
+import { SEO } from '../components/SEO';
+import { getCanonicalUrl } from '../config/seo';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, ShieldCheck, Cpu, Rocket } from 'lucide-react';
+import { ArrowUpRight, ShieldCheck } from 'lucide-react';
+import { generateBreadcrumbSchema } from '../utils/seoSchema';
 
 export const Process = () => {
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Process', path: '/process' },
+  ]);
+
+  const processPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'iWAAT 7-Stage Agile Engineering & Growth Methodology',
+    description:
+      'Explore the transparent 7-stage software development lifecycle and quality guarantee at iWAAT.',
+    url: getCanonicalUrl('/process'),
+  };
+
   return (
     <div className="pt-24 md:pt-36 pb-20 space-y-20">
+      {/* Dynamic SEO Meta & Schema */}
+      <SEO
+        title="Our Process — 7-Stage Agile Engineering & Quality Assurance | iWAAT"
+        description="From initial discovery to launch and post-release scaling, our transparent agile process ensures predictable timelines and exceptional software quality."
+        canonicalUrl={getCanonicalUrl('/process')}
+        schema={[processPageSchema, breadcrumbSchema]}
+      />
+
       {/* Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <SectionHeader
@@ -32,9 +56,9 @@ export const Process = () => {
             </div>
           </div>
 
-          <h3 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 dark:text-white">
+          <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 dark:text-white">
             100% Quality & Security Guarantee
-          </h3>
+          </h2>
 
           <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
             Every line of code written by iWAAT undergoes automated static analysis, cross-browser compatibility checks, accessibility testing, and security hardening before reaching production servers.
@@ -53,3 +77,5 @@ export const Process = () => {
     </div>
   );
 };
+
+export default Process;

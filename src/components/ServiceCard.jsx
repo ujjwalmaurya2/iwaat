@@ -23,6 +23,7 @@ const iconMap = {
 
 export const ServiceCard = ({ service, index = 0 }) => {
   const IconComponent = iconMap[service.icon] || Code2;
+  const servicePath = `/services/${service.slug || service.id}`;
 
   return (
     <motion.div
@@ -35,7 +36,7 @@ export const ServiceCard = ({ service, index = 0 }) => {
     >
       {/* Top Accent Gradient Line */}
       <div
-        className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${service.gradient}`}
+        className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${service.gradient || 'from-violet-600 to-indigo-600'}`}
       />
 
       <div>
@@ -50,16 +51,18 @@ export const ServiceCard = ({ service, index = 0 }) => {
         </div>
 
         {/* Title & Short Description */}
-        <h3 className="font-heading text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-violet-500 dark:group-hover:text-violet-400 transition-colors">
-          {service.title}
-        </h3>
+        <Link to={servicePath}>
+          <h3 className="font-heading text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-violet-500 dark:group-hover:text-violet-400 transition-colors">
+            {service.title}
+          </h3>
+        </Link>
         <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">
           {service.shortDescription}
         </p>
 
         {/* Feature List Bullets */}
         <ul className="space-y-2.5 mb-8">
-          {service.features.map((feature, fIdx) => (
+          {service.features?.map((feature, fIdx) => (
             <li
               key={fIdx}
               className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium"
@@ -74,10 +77,10 @@ export const ServiceCard = ({ service, index = 0 }) => {
       {/* Footer Link */}
       <div className="pt-4 border-t border-slate-200/50 dark:border-slate-800/60 flex items-center justify-between">
         <Link
-          to={`/services`}
+          to={servicePath}
           className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-violet-600 dark:text-violet-400 group-hover:text-orange-500 transition-colors"
         >
-          <span>Explore Service</span>
+          <span>Explore Detailed Scope</span>
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>

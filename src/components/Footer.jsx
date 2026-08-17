@@ -114,19 +114,19 @@ export const Footer = () => {
             </h4>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <Link to="/services" className="hover:text-violet-400 transition-colors">Web Development</Link>
+                <Link to="/services/web-development" className="hover:text-violet-400 transition-colors">Web Development</Link>
               </li>
               <li>
-                <Link to="/services" className="hover:text-violet-400 transition-colors">Software Development</Link>
+                <Link to="/services/software-development" className="hover:text-violet-400 transition-colors">Software Development</Link>
               </li>
               <li>
-                <Link to="/services" className="hover:text-violet-400 transition-colors">UI/UX Design</Link>
+                <Link to="/services/ui-ux-design" className="hover:text-violet-400 transition-colors">UI/UX Design</Link>
               </li>
               <li>
-                <Link to="/services" className="hover:text-violet-400 transition-colors">Digital Marketing & SEO</Link>
+                <Link to="/services/digital-marketing" className="hover:text-violet-400 transition-colors">Digital Marketing & SEO</Link>
               </li>
               <li>
-                <Link to="/services" className="hover:text-violet-400 transition-colors">Branding & Identity</Link>
+                <Link to="/services/branding" className="hover:text-violet-400 transition-colors">Branding & Identity</Link>
               </li>
             </ul>
           </div>

@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SectionHeader } from '../components/SectionHeader';
+import { SEO } from '../components/SEO';
+import { getCanonicalUrl } from '../config/seo';
 import { Calendar, MapPin, Image as ImageIcon, Sparkles, X } from 'lucide-react';
 import { useCMS } from '../cms/cmsContext';
+import { generateBreadcrumbSchema } from '../utils/seoSchema';
 
 export const Events = () => {
   const { events } = useCMS();
@@ -10,8 +13,29 @@ export const Events = () => {
 
   const publishedEvents = events.filter((e) => e.status === 'published');
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Events', path: '/events' },
+  ]);
+
+  const eventsCollectionSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'iWAAT Agency Milestones, Hackathons & Product Launches',
+    description:
+      'Explore behind-the-scenes photography from engineering meetups, design hackathons, client workshops, and product releases at iWAAT.',
+    url: getCanonicalUrl('/events'),
+  };
+
   return (
     <div className="pt-24 md:pt-36 pb-20 space-y-16">
+      {/* Dynamic SEO Meta & Schema */}
+      <SEO
+        title="Agency Events & Milestones — Behind The Scenes & Launches | iWAAT"
+        description="Explore behind-the-scenes photography from our engineering meetups, design hackathons, client workshops, and product releases."
+        canonicalUrl={getCanonicalUrl('/events')}
+        schema={[eventsCollectionSchema, breadcrumbSchema]}
+      />
+
       {/* Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <SectionHeader
@@ -73,8 +97,9 @@ export const Events = () => {
                 >
                   <img
                     src={img.url}
-                    alt={img.caption || `Event photo ${imgIdx + 1}`}
+                    alt={img.caption || `iWAAT team event photo ${imgIdx + 1} - ${evt.title}`}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                     {img.caption && (
@@ -130,3 +155,5 @@ export const Events = () => {
     </div>
   );
 };
+
+export default Events;

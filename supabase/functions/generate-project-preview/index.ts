@@ -17,7 +17,7 @@ function getCorsHeaders(req: Request) {
     (isDev && (origin.startsWith("http://localhost:") || origin.startsWith("http://127.0.0.1:")));
 
   return {
-    "Access-Control-Allow-Origin": isAllowed ? origin : "https://iwaat.in",
+    "Access-Control-Allow-Origin": isAllowed ? origin : "https://www.iwaat.in",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Vary": "Origin",

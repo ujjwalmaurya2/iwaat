@@ -1,0 +1,24 @@
+{
+  "name": "iWAAT Digital Services",
+  "short_name": "iWAAT",
+  "description": "We Build. We Scale. We Market. Premium Web Development, Custom Software & Digital Agency.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070A14",
+  "theme_color": "#7c3aed",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
