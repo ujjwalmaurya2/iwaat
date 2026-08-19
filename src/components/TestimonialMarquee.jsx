@@ -6,6 +6,10 @@ const row1 = testimonialsData.slice(0, 4);
 const row2 = testimonialsData.slice(4, 8);
 
 const MarqueeCard = memo(({ testimonial }) => {
+  const optimizedAvatar = testimonial.avatar && testimonial.avatar.includes('unsplash.com')
+    ? testimonial.avatar.replace(/w=\d+/, 'w=80').replace(/q=\d+/, 'q=80')
+    : testimonial.avatar;
+
   return (
     <div className="w-[320px] sm:w-[400px] shrink-0 glass-panel p-6 sm:p-8 rounded-3xl glow-card flex flex-col justify-between relative mx-3 group hover:scale-[1.02] transition-transform duration-300 transform-gpu">
       <Quote className="absolute top-6 right-6 w-10 h-10 text-violet-500/10 dark:text-violet-500/20 pointer-events-none" />
@@ -28,7 +32,7 @@ const MarqueeCard = memo(({ testimonial }) => {
       <div className="pt-4 border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img
-            src={testimonial.avatar}
+            src={optimizedAvatar}
             alt={testimonial.author}
             loading="lazy"
             decoding="async"
@@ -37,9 +41,9 @@ const MarqueeCard = memo(({ testimonial }) => {
             className="w-10 h-10 rounded-full object-cover border-2 border-violet-500/40 shadow-md"
           />
           <div>
-            <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
+            <p className="font-heading font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
               {testimonial.author}
-            </h4>
+            </p>
             <p className="text-[11px] text-slate-500 dark:text-slate-400">
               {testimonial.role} • <span className="text-violet-500 font-medium">{testimonial.organization}</span>
             </p>

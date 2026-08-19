@@ -157,19 +157,19 @@
   -webkit-text-fill-color: transparent;
 }
 
-/* Modern Infinite Marquee Animation (Compositor-only) */
+/* Modern Infinite Marquee Animation (Compositor-only 3x Seamless Loop) */
 @keyframes marquee-left {
   0% {
     transform: translate3d(0%, 0, 0);
   }
   100% {
-    transform: translate3d(-50%, 0, 0);
+    transform: translate3d(-33.333333%, 0, 0);
   }
 }
 
 @keyframes marquee-right {
   0% {
-    transform: translate3d(-50%, 0, 0);
+    transform: translate3d(-33.333333%, 0, 0);
   }
   100% {
     transform: translate3d(0%, 0, 0);
@@ -197,6 +197,58 @@
   }
 }
 
+/* GPU-Accelerated Background Blob Floating Animations */
+@keyframes float-blob-1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(50px, -40px, 0) scale(1.1);
+  }
+  66% {
+    transform: translate3d(-30px, 30px, 0) scale(0.95);
+  }
+}
+
+@keyframes float-blob-2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(-60px, 50px, 0) scale(1.08);
+  }
+  66% {
+    transform: translate3d(35px, -35px, 0) scale(0.92);
+  }
+}
+
+@keyframes float-blob-3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(40px, -45px, 0) scale(1.06);
+  }
+  66% {
+    transform: translate3d(-50px, 40px, 0) scale(0.96);
+  }
+}
+
+.animate-blob-1 {
+  animation: float-blob-1 20s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-blob-2 {
+  animation: float-blob-2 25s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-blob-3 {
+  animation: float-blob-3 22s ease-in-out infinite;
+  will-change: transform;
+}
+
 /* Accessibility: Prefers Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -209,7 +261,10 @@
   }
 
   .animate-marquee-left,
-  .animate-marquee-right {
+  .animate-marquee-right,
+  .animate-blob-1,
+  .animate-blob-2,
+  .animate-blob-3 {
     animation: none !important;
     transform: none !important;
   }

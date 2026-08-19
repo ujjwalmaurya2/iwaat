@@ -6,6 +6,14 @@ import { ProjectModal } from './ProjectModal';
 export const ProjectCard = memo(({ project, index = 0 }) => {
   const [modalOpen, setModalOpen] = useState(false);
 
+  // Helper to optimize image URL based on provider (Unsplash, etc.)
+  const rawImage = project.preview_url || project.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=640&auto=format&fit=crop';
+  const optimizedImageSrc = rawImage.includes('unsplash.com')
+    ? rawImage.replace(/w=\d+/, 'w=640').replace(/q=\d+/, 'q=80')
+    : rawImage;
+
+  const fallbackImage = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=640&auto=format&fit=crop';
+
   return (
     <>
       <motion.div
@@ -23,14 +31,16 @@ export const ProjectCard = memo(({ project, index = 0 }) => {
           data-cursor="VIEW"
         >
           <img
-            src={project.preview_url || project.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop'}
+            src={optimizedImageSrc}
             alt={project.title}
-            loading="lazy"
+            loading={index === 0 ? 'eager' : 'lazy'}
+            fetchPriority={index === 0 ? 'high' : 'auto'}
             decoding="async"
             width="600"
             height="375"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             onError={(e) => {
-              e.target.src = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop';
+              e.target.src = fallbackImage;
             }}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
           />
@@ -51,7 +61,8 @@ export const ProjectCard = memo(({ project, index = 0 }) => {
                 e.stopPropagation();
                 setModalOpen(true);
               }}
-              className="px-4 py-2 rounded-full text-xs font-bold bg-white text-slate-900 hover:bg-slate-100 shadow-xl transition-all active:scale-95"
+              aria-label={`View Case Study for ${project.title}`}
+              className="px-4 py-2 rounded-full text-xs font-bold bg-white text-slate-900 hover:bg-slate-100 shadow-xl transition-all active:scale-95 cursor-pointer"
             >
               Case Study
             </button>
@@ -62,7 +73,7 @@ export const ProjectCard = memo(({ project, index = 0 }) => {
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="p-2.5 rounded-full bg-violet-600 text-white hover:bg-violet-500 shadow-xl transition-all active:scale-95"
-                aria-label="Live Demo"
+                aria-label={`Open Live Demo of ${project.title}`}
               >
                 <ExternalLink className="w-4 h-4" />
               </a>

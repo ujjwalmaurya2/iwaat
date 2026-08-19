@@ -4,24 +4,51 @@ import { supabase, isSupabaseConfigured, uploadToSupabaseStorage } from './supab
 import { optimizeImage } from './imageOptimizer';
 import { useAuth } from './authContext';
 import initialProjects from '../data/projects.json';
+import initialServices from '../data/services.json';
+import initialTestimonials from '../data/testimonials.json';
+import initialCompany from '../data/company.json';
 
 const CMSContext = createContext(null);
 
 export const CMSProvider = ({ children }) => {
   const { user, isAdmin } = useAuth();
 
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState(() => initialProjects || []);
   const [categories, setCategories] = useState([]);
-  const [services, setServices] = useState([]);
-  const [testimonials, setTestimonials] = useState([]);
+  const [services, setServices] = useState(() => initialServices || []);
+  const [testimonials, setTestimonials] = useState(() => initialTestimonials || []);
   const [events, setEvents] = useState([]);
   const [inquiries, setInquiries] = useState([]);
-  const [contactSettings, setContactSettings] = useState(null);
-  const [websiteSettings, setWebsiteSettings] = useState(null);
+  const [contactSettings, setContactSettings] = useState(() => initialCompany.contactSettings || {
+    id: 'default',
+    email: 'iwaatproduction@gmail.com',
+    secondary_email: 'support@iwaat.com',
+    phone: '+1 (800) 492-2800',
+    secondary_phone: '+1 (800) 492-2801',
+    whatsapp: '+18004922800',
+    location: 'Global / Remote Digital Agency (US & India Hubs)',
+    working_hours: 'Mon - Sat: 9:00 AM - 8:00 PM EST (24/7 Support)',
+    address: '750 Lexington Ave, Suite 1400',
+    city: 'New York',
+    state: 'NY',
+    country: 'USA',
+    socials: { linkedin: 'https://linkedin.com/company/iwaat', twitter: 'https://twitter.com/iwaat_digital', instagram: 'https://instagram.com/iwaat.digital', github: 'https://github.com/iwaat-agency' }
+  });
+  const [websiteSettings, setWebsiteSettings] = useState(() => ({
+    id: 'default',
+    site_name: 'iWAAT Agency',
+    name: 'iWAAT',
+    tagline: 'We Build • We Scale • We Market',
+    description: 'Premier digital agency specializing in custom web platforms, e-commerce, cloud infrastructure, and enterprise digital solutions.',
+    short_description: 'iWAAT is a premier digital agency specializing in custom web design, high-performance web development, mobile apps, SEO, and digital marketing for businesses across India, Uttar Pradesh, Prayagraj, and global markets.',
+    primary_email: 'iwaatproduction@gmail.com',
+    hero_title: 'Engineering Digital Excellence for Modern Global Brands',
+    hero_subtitle: 'We architect bespoke digital products, responsive web apps, and secure high-performance platforms.'
+  }));
   const [mediaAssets, setMediaAssets] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Helper to log audit actions
   const logAudit = useCallback(async (action, entity, entityId, summary) => {
@@ -48,7 +75,6 @@ export const CMSProvider = ({ children }) => {
 
   // Load all CMS datasets from Supabase or Dexie
   const refreshData = useCallback(async () => {
-    setLoading(true);
     try {
       await seedInitialDataIfNeeded();
 
@@ -74,7 +100,7 @@ export const CMSProvider = ({ children }) => {
           isAdmin ? supabase.from('inquiries').select('*').order('created_at', { ascending: false }) : Promise.resolve({ data: [] }),
           supabase.from('contact_settings').select('*').limit(1).maybeSingle(),
           supabase.from('website_settings').select('*').limit(1).maybeSingle(),
-          supabase.from('media_assets').select('*').order('created_at', { ascending: false }),
+          isAdmin ? supabase.from('media_assets').select('*').order('created_at', { ascending: false }) : Promise.resolve({ data: [] }),
           isAdmin ? supabase.from('notifications').select('*').order('created_at', { ascending: false }) : Promise.resolve({ data: [] }),
           isAdmin ? supabase.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(50) : Promise.resolve({ data: [] }),
         ]);

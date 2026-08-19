@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { Sparkles, ArrowRight, Heart, CheckCircle2, ShieldCheck } from 'lucide-react';
-import confetti from 'canvas-confetti';
 import { useCMS } from '../cms/cmsContext';
 import { BrandLockup } from './BrandLockup';
 
@@ -13,15 +11,18 @@ export const Footer = () => {
 
   const publishedProjects = projects.filter((p) => p.status === 'published').slice(0, 6);
 
-  const handleSubscribe = (e) => {
+  const handleSubscribe = async (e) => {
     e.preventDefault();
     if (email.trim()) {
       setSubscribed(true);
-      confetti({
-        particleCount: 80,
-        spread: 60,
-        origin: { y: 0.8 },
-      });
+      try {
+        const confetti = (await import('canvas-confetti')).default;
+        confetti({
+          particleCount: 80,
+          spread: 60,
+          origin: { y: 0.8 },
+        });
+      } catch (_) {}
       setTimeout(() => setSubscribed(false), 5000);
       setEmail('');
     }
@@ -64,7 +65,9 @@ export const Footer = () => {
                 </div>
               ) : (
                 <form onSubmit={handleSubscribe} className="flex items-center gap-2">
+                  <label htmlFor="newsletter_email_input" className="sr-only">Business Email Address</label>
                   <input
+                    id="newsletter_email_input"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -74,6 +77,7 @@ export const Footer = () => {
                   />
                   <button
                     type="submit"
+                    aria-label="Subscribe to newsletter"
                     className="p-2.5 rounded-full bg-violet-600 text-white hover:bg-violet-500 transition-colors shadow-md shadow-violet-500/20 shrink-0 cursor-pointer"
                   >
                     <ArrowRight className="w-4 h-4" />
@@ -85,9 +89,9 @@ export const Footer = () => {
 
           {/* Col 1: Company */}
           <div className="space-y-4">
-            <h4 className="font-heading text-sm font-semibold uppercase tracking-wider text-white">
+            <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-white">
               Company
-            </h4>
+            </h3>
             <ul className="space-y-2.5 text-sm">
               <li>
                 <Link to="/about" className="hover:text-violet-400 transition-colors">About Us</Link>
@@ -118,9 +122,9 @@ export const Footer = () => {
 
           {/* Col 2: Services */}
           <div className="space-y-4">
-            <h4 className="font-heading text-sm font-semibold uppercase tracking-wider text-white">
+            <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-white">
               Services
-            </h4>
+            </h3>
             <ul className="space-y-2.5 text-sm">
               <li>
                 <Link to="/services/web-development" className="hover:text-violet-400 transition-colors">Web Development</Link>
@@ -142,9 +146,9 @@ export const Footer = () => {
 
           {/* Col 3: Real Projects */}
           <div className="space-y-4">
-            <h4 className="font-heading text-sm font-semibold uppercase tracking-wider text-white">
+            <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-white">
               Featured Projects
-            </h4>
+            </h3>
             <ul className="space-y-2.5 text-sm">
               {publishedProjects.map((proj) => (
                 <li key={proj.id}>
@@ -233,6 +237,7 @@ export const Footer = () => {
               to="/super-admin/login"
               className="p-2 rounded-full bg-slate-900/60 border border-slate-800 text-slate-500 hover:text-violet-400 transition-colors ml-2"
               title="Super Admin Portal Login"
+              aria-label="Super Admin Portal Login"
             >
               <ShieldCheck className="w-4 h-4" />
             </Link>

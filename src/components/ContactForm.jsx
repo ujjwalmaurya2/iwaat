@@ -2,14 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, CheckCircle2, MessageSquare, AlertCircle } from 'lucide-react';
-import confetti from 'canvas-confetti';
 import { useCMS } from '../cms/cmsContext';
 
 // Helper to sanitize text fields and remove non-printable control characters
 const sanitizeText = (val, maxLen = 100) => {
   if (!val || typeof val !== 'string') return '';
   return val
-    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // strip control chars
+    .replace(/[\x00-\x1F\x7F-\x9F]/g, '') // strip control chars cleanly
     .trim()
     .slice(0, maxLen);
 };
@@ -94,12 +93,15 @@ export const ContactForm = () => {
 
       lastSubmitTimeRef.current = Date.now();
 
-      // Fire celebratory confetti!
-      confetti({
-        particleCount: 120,
-        spread: 70,
-        origin: { y: 0.6 },
-      });
+      // Dynamic import of celebratory confetti to keep initial bundle lean
+      try {
+        const confetti = (await import('canvas-confetti')).default;
+        confetti({
+          particleCount: 120,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+      } catch (_) {}
 
       setSubmitted(true);
       reset();
@@ -129,7 +131,8 @@ export const ContactForm = () => {
           </p>
           <button
             onClick={() => setSubmitted(false)}
-            className="px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-violet-600 text-white shadow-md hover:bg-violet-500 transition-colors"
+            aria-label="Submit another project inquiry"
+            className="px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-violet-600 text-white shadow-md hover:bg-violet-500 transition-colors cursor-pointer"
           >
             Submit Another Project Inquiry
           </button>
@@ -165,10 +168,11 @@ export const ContactForm = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Full Name */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="contact_form_name" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
                 Your Full Name <span className="text-violet-500">*</span>
               </label>
               <input
+                id="contact_form_name"
                 type="text"
                 placeholder="e.g. Alex Morgan"
                 maxLength={100}
@@ -184,10 +188,11 @@ export const ContactForm = () => {
 
             {/* Email Address */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="contact_form_email" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
                 Business Email <span className="text-violet-500">*</span>
               </label>
               <input
+                id="contact_form_email"
                 type="email"
                 placeholder="alex@company.com"
                 maxLength={120}
@@ -211,10 +216,11 @@ export const ContactForm = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Phone Number */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="contact_form_phone" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
                 Phone / WhatsApp Number
               </label>
               <input
+                id="contact_form_phone"
                 type="tel"
                 placeholder="+1 (555) 000-0000"
                 maxLength={30}
@@ -225,10 +231,11 @@ export const ContactForm = () => {
 
             {/* Company / Organization */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="contact_form_company" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
                 Company / Organization
               </label>
               <input
+                id="contact_form_company"
                 type="text"
                 placeholder="e.g. Apex Health / Studio X"
                 maxLength={100}
@@ -241,10 +248,11 @@ export const ContactForm = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Service Interested In */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="contact_form_service" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
                 Service Interested In <span className="text-violet-500">*</span>
               </label>
               <select
+                id="contact_form_service"
                 {...register('service', { required: 'Please select a service' })}
                 className="w-full px-4 py-3 rounded-2xl bg-slate-100/80 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-violet-500 transition-colors"
               >
@@ -263,10 +271,11 @@ export const ContactForm = () => {
 
             {/* Budget Range */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="contact_form_budget" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
                 Estimated Budget Range
               </label>
               <select
+                id="contact_form_budget"
                 {...register('budget')}
                 className="w-full px-4 py-3 rounded-2xl bg-slate-100/80 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-violet-500 transition-colors"
               >
@@ -287,7 +296,9 @@ export const ContactForm = () => {
                     transition={{ duration: 0.22, ease: 'easeOut' }}
                     className="overflow-hidden"
                   >
+                    <label htmlFor="contact_form_custom_budget" className="sr-only">Enter custom budget</label>
                     <input
+                      id="contact_form_custom_budget"
                       type="text"
                       placeholder="Enter your custom budget"
                       maxLength={80}
@@ -302,10 +313,11 @@ export const ContactForm = () => {
 
           {/* Project Description */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+            <label htmlFor="contact_form_description" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
               Project Description / Goals <span className="text-violet-500">*</span>
             </label>
             <textarea
+              id="contact_form_description"
               rows="4"
               placeholder="Tell us about your project objectives, timeline, features, or design vision..."
               maxLength={3000}
@@ -325,6 +337,7 @@ export const ContactForm = () => {
           <button
             type="submit"
             disabled={isSubmitting}
+            aria-label="Send Project Proposal"
             className="w-full py-4 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-orange-500 text-white font-bold text-base shadow-xl shadow-violet-500/25 hover:shadow-violet-500/40 transition-all flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50"
           >
             <span>{isSubmitting ? 'Sending Proposal...' : 'Send Project Proposal'}</span>

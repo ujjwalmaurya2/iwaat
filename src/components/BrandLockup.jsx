@@ -20,12 +20,18 @@ export const BrandLockup = ({
     if (logoSrc) {
       return (
         <div className={`${customLogoClass} shrink-0 relative flex items-center justify-center`}>
-          <img
-            src={logoSrc}
-            alt="iWAAT Logo"
-            className="w-full h-full object-contain filter drop-shadow-[0_2px_10px_rgba(168,85,247,0.35)] transition-transform duration-300 group-hover:scale-105"
-            loading="eager"
-          />
+          <picture className="w-full h-full flex items-center justify-center">
+            <source srcSet="/logo.webp" type="image/webp" />
+            <img
+              src={logoSrc}
+              alt="iWAAT Logo"
+              width="48"
+              height="48"
+              decoding="async"
+              className="w-full h-full object-contain filter drop-shadow-[0_2px_10px_rgba(168,85,247,0.35)] transition-transform duration-300 group-hover:scale-105"
+              loading="eager"
+            />
+          </picture>
         </div>
       );
     }

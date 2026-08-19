@@ -14,7 +14,14 @@ export const MagneticButton = memo(({
   href,
   ...props
 }) => {
-  const [isTouchOrReduced, setIsTouchOrReduced] = useState(false);
+  const [isTouchOrReduced, setIsTouchOrReduced] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return (
+      window.matchMedia('(pointer: coarse)').matches ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      window.innerWidth < 768
+    );
+  });
 
   // Motion values for button container
   const rawX = useMotionValue(0);
@@ -31,7 +38,7 @@ export const MagneticButton = memo(({
   const contentPosY = useSpring(rawContentY, contentSpringConfig);
 
   useEffect(() => {
-    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+    const isTouch = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768;
     const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (isTouch || isReduced) {
       setIsTouchOrReduced(true);

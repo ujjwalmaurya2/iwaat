@@ -14,9 +14,6 @@ import {
   Globe,
   Activity,
   LogOut,
-  ExternalLink,
-  Sparkles,
-  ShieldCheck,
   X,
 } from 'lucide-react';
 import { useAuth } from '../../cms/authContext';

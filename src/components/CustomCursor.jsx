@@ -23,8 +23,8 @@ export const CustomCursor = () => {
   const ringY = useSpring(rawY, ringSpringConfig);
 
   useEffect(() => {
-    // Disable on touch screens or reduced-motion devices
-    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+    // Disable on touch screens, mobile screens, or reduced-motion devices
+    const isTouch = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768;
     const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (isTouch || isReduced) {
       return;

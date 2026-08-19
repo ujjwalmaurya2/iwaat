@@ -76,45 +76,29 @@ export const Home = () => {
             {/* Left Content */}
             <div className="lg:col-span-7 space-y-8 text-center lg:text-left z-10">
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 dark:bg-violet-500/15 border border-violet-500/30 text-violet-600 dark:text-violet-300 text-xs sm:text-sm font-semibold shadow-sm"
               >
                 <Sparkles className="w-4 h-4 text-violet-500 animate-spin" />
                 <span>{websiteSettings?.tagline || 'We Build • We Scale • We Market'}</span>
               </motion.div>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 25 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="font-heading font-extrabold text-4xl sm:text-6xl lg:text-7xl tracking-tight text-slate-900 dark:text-white leading-[1.08]"
-              >
+              <h1 className="font-heading font-extrabold text-4xl sm:text-6xl lg:text-7xl tracking-tight text-slate-900 dark:text-white leading-[1.08]">
                 Web Development &amp;{' '}
                 <span className="bg-gradient-to-r from-violet-500 via-orange-400 to-pink-500 bg-clip-text text-transparent">
                   Digital Solutions
                 </span>{' '}
                 Engineered in Prayagraj
-              </motion.h1>
+              </h1>
 
-              <motion.p
-                initial={{ opacity: 0, y: 25 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-slate-600 dark:text-slate-300 text-base sm:text-xl font-normal leading-relaxed max-w-2xl mx-auto lg:mx-0"
-              >
+              <p className="text-slate-600 dark:text-slate-300 text-base sm:text-xl font-normal leading-relaxed max-w-2xl mx-auto lg:mx-0">
                 {websiteSettings?.short_description ||
                   'iWAAT is a web development and digital services agency serving businesses and organizations in Prayagraj, Uttar Pradesh, and clients across India and global markets.'}
-              </motion.p>
+              </p>
 
               {/* Action Buttons */}
-              <motion.div
-                initial={{ opacity: 0, y: 25 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2"
-              >
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
                 <MagneticButton href="/projects" variant="primary">
                   <span>View Our Work</span>
                   <ArrowUpRight className="w-4 h-4" />
@@ -123,15 +107,10 @@ export const Home = () => {
                 <MagneticButton href="/contact" variant="secondary">
                   <span>Start a Project</span>
                 </MagneticButton>
-              </motion.div>
+              </div>
 
               {/* Trust Badges */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                className="pt-6 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs text-slate-500 dark:text-slate-400 font-medium"
-              >
+              <div className="pt-6 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs text-slate-500 dark:text-slate-400 font-medium">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                   <span>20+ Live Projects Delivered</span>
@@ -144,7 +123,7 @@ export const Home = () => {
                   <CheckCircle2 className="w-4 h-4 text-orange-500" />
                   <span>24/7 Client Support</span>
                 </div>
-              </motion.div>
+              </div>
             </div>
 
             {/* Right 3D Mockup Composition */}
@@ -157,6 +136,15 @@ export const Home = () => {
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            role="button"
+            tabIndex={0}
+            aria-label="Scroll down to content"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.scrollTo({ top: window.innerHeight * 0.8, behavior: 'smooth' });
+              }
+            }}
             className="flex flex-col items-center gap-1.5 pt-12 opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
             onClick={() => window.scrollTo({ top: window.innerHeight * 0.8, behavior: 'smooth' })}
           >
@@ -297,9 +285,9 @@ export const Home = () => {
               <div className="w-10 h-10 rounded-xl bg-violet-500/10 text-violet-500 flex items-center justify-center">
                 <Zap className="w-5 h-5" />
               </div>
-              <h4 className="font-heading font-bold text-base text-slate-900 dark:text-white">
+              <h3 className="font-heading font-bold text-base text-slate-900 dark:text-white">
                 {feature.title}
-              </h4>
+              </h3>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 {feature.description}
               </p>

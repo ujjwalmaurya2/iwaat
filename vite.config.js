@@ -23,6 +23,12 @@ export default defineConfig({
             if (id.includes('@supabase')) {
               return 'vendor-supabase';
             }
+            if (id.includes('dexie')) {
+              return 'vendor-dexie';
+            }
+            if (id.includes('react-hook-form')) {
+              return 'vendor-forms';
+            }
             if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
               return 'vendor-react';
             }

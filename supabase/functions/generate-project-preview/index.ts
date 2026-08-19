@@ -144,7 +144,7 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { project_id, website_url, slug = "preview" } = await req.json();
+    const { project_id, website_url } = await req.json();
 
     const validation = validateAndNormalizeUrl(website_url);
     if (!validation.valid || !validation.normalizedUrl) {

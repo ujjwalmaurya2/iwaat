@@ -102,7 +102,7 @@ export async function generateWebsitePreview(rawUrl) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-    const mlApiUrl = `https://api.microlink.io?url=${encodeURIComponent(url)}&screenshot=true&meta=false&viewport.width=1440&viewport.height=900&waitForTimeout=1000`;
+    const mlApiUrl = `https://api.microlink.io?url=${encodeURIComponent(url)}&screenshot=true&meta=false&viewport.width=1024&viewport.height=640&waitForTimeout=1000`;
     const res = await fetch(mlApiUrl, { signal: controller.signal });
     clearTimeout(timeoutId);
 
@@ -134,7 +134,7 @@ export async function generateWebsitePreview(rawUrl) {
   // ============================================================
   try {
     console.log('[Preview] Trying Provider 2: WordPress mShots CDN...');
-    const mshotsUrl = `https://s0.wp.com/mshots/v1/${encodeURIComponent(url)}?w=1440&h=900`;
+    const mshotsUrl = `https://s0.wp.com/mshots/v1/${encodeURIComponent(url)}?w=960&h=600`;
     const isValid = await verifyImageLoads(mshotsUrl, 6000);
     if (isValid) {
       console.log('[Preview] WordPress mShots CDN URL verified and ready!');
@@ -155,7 +155,7 @@ export async function generateWebsitePreview(rawUrl) {
   // ============================================================
   try {
     console.log('[Preview] Trying Provider 3: Thum.io CDN...');
-    const thumUrl = `https://image.thum.io/get/width/1440/crop/900/noanimate/${url}`;
+    const thumUrl = `https://image.thum.io/get/width/960/crop/600/noanimate/${url}`;
     const isValid = await verifyImageLoads(thumUrl, 6000);
     if (isValid) {
       console.log('[Preview] Thum.io CDN URL verified and ready!');
@@ -176,7 +176,7 @@ export async function generateWebsitePreview(rawUrl) {
   // ============================================================
   try {
     console.log('[Preview] Trying Provider 4: S-Shot CDN...');
-    const sshotUrl = `https://mini.s-shot.ru/1440x900/JPEG/1440/Z100/?${encodeURIComponent(url)}`;
+    const sshotUrl = `https://mini.s-shot.ru/960x600/JPEG/960/Z100/?${encodeURIComponent(url)}`;
     const isValid = await verifyImageLoads(sshotUrl, 6000);
     if (isValid) {
       console.log('[Preview] S-Shot CDN URL verified and ready!');
