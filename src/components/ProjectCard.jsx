@@ -6,12 +6,34 @@ import { ProjectModal } from './ProjectModal';
 export const ProjectCard = memo(({ project, index = 0 }) => {
   const [modalOpen, setModalOpen] = useState(false);
 
-  // Helper to optimize image URL based on provider (Unsplash, etc.)
+  // Helper to optimize image URL based on provider (Unsplash, Microlink, mShots, etc.)
   const rawImage = project.preview_url || project.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=640&auto=format&fit=crop';
-  const optimizedImageSrc = rawImage.includes('unsplash.com')
-    ? rawImage.replace(/w=\d+/, 'w=640').replace(/q=\d+/, 'q=80')
-    : rawImage;
+  
+  const getOptimizedSrc = (url) => {
+    if (!url || typeof url !== 'string') return fallbackImage;
+    try {
+      if (url.includes('unsplash.com')) {
+        return url.replace(/w=\d+/, 'w=640').replace(/q=\d+/, 'q=80');
+      }
+      if (url.includes('api.microlink.io')) {
+        const parsed = new URL(url);
+        parsed.searchParams.set('screenshot.type', 'jpeg');
+        parsed.searchParams.set('screenshot.quality', '80');
+        parsed.searchParams.set('viewport.width', '960');
+        parsed.searchParams.set('viewport.height', '600');
+        parsed.searchParams.set('viewport.deviceScaleFactor', '1');
+        return parsed.toString();
+      }
+      if (url.includes('wp.com/mshots')) {
+        return url.replace(/w=\d+/, 'w=960').replace(/h=\d+/, 'h=600');
+      }
+      return url;
+    } catch {
+      return url;
+    }
+  };
 
+  const optimizedImageSrc = getOptimizedSrc(rawImage);
   const fallbackImage = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=640&auto=format&fit=crop';
 
   return (
@@ -33,8 +55,7 @@ export const ProjectCard = memo(({ project, index = 0 }) => {
           <img
             src={optimizedImageSrc}
             alt={project.title}
-            loading={index === 0 ? 'eager' : 'lazy'}
-            fetchPriority={index === 0 ? 'high' : 'auto'}
+            loading="lazy"
             decoding="async"
             width="600"
             height="375"

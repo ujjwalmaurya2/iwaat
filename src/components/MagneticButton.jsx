@@ -45,10 +45,20 @@ export const MagneticButton = memo(({
     }
   }, []);
 
+  const rectRef = React.useRef(null);
+
+  const handleMouseEnter = (e) => {
+    if (isTouchOrReduced) return;
+    rectRef.current = e.currentTarget.getBoundingClientRect();
+  };
+
   const handleMouseMove = (e) => {
     if (isTouchOrReduced) return;
-    const { clientX, clientY, currentTarget } = e;
-    const { left, top, width, height } = currentTarget.getBoundingClientRect();
+    if (!rectRef.current) {
+      rectRef.current = e.currentTarget.getBoundingClientRect();
+    }
+    const { clientX, clientY } = e;
+    const { left, top, width, height } = rectRef.current;
     const centerX = left + width / 2;
     const centerY = top + height / 2;
 
@@ -69,6 +79,7 @@ export const MagneticButton = memo(({
   };
 
   const handleMouseLeave = () => {
+    rectRef.current = null;
     rawX.set(0);
     rawY.set(0);
     rawContentX.set(0);
@@ -96,6 +107,7 @@ export const MagneticButton = memo(({
     <Component
       href={href}
       onClick={onClick}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{

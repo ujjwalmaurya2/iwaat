@@ -50,6 +50,9 @@ export const CustomCursor = () => {
       }
     };
 
+    let currentHovered = false;
+    let currentLabel = '';
+
     const onMouseOver = (e) => {
       const target = e.target;
       if (!target || !target.closest) return;
@@ -64,14 +67,24 @@ export const CustomCursor = () => {
         target.closest('button') ||
         target.closest('a');
 
+      let nextHovered = false;
+      let nextLabel = '';
+
       if (customLabel) {
-        setCursorState({ isHovered: true, label: customLabel });
+        nextHovered = true;
+        nextLabel = customLabel;
       } else if (isButton) {
-        setCursorState({ isHovered: true, label: 'CLICK' });
+        nextHovered = true;
+        nextLabel = 'CLICK';
       } else if (isCard) {
-        setCursorState({ isHovered: true, label: 'EXPLORE' });
-      } else {
-        setCursorState({ isHovered: false, label: '' });
+        nextHovered = true;
+        nextLabel = 'EXPLORE';
+      }
+
+      if (nextHovered !== currentHovered || nextLabel !== currentLabel) {
+        currentHovered = nextHovered;
+        currentLabel = nextLabel;
+        setCursorState({ isHovered: nextHovered, label: nextLabel });
       }
     };
 

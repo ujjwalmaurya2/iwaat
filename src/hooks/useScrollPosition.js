@@ -10,13 +10,14 @@ export const useScrollPosition = (threshold = 20) => {
 
   useEffect(() => {
     let ticking = false;
-    let lastIsScrolled = window.pageYOffset > threshold;
+    const getScroll = () => window.scrollY || window.pageYOffset || 0;
+    let lastIsScrolled = getScroll() > threshold;
 
     // Set initial value immediately
     setIsScrolled(lastIsScrolled);
 
     const updatePosition = () => {
-      const currentScroll = window.pageYOffset;
+      const currentScroll = getScroll();
       const newIsScrolled = currentScroll > threshold;
 
       if (newIsScrolled !== lastIsScrolled) {

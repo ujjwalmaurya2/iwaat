@@ -102,7 +102,7 @@ export async function generateWebsitePreview(rawUrl) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-    const mlApiUrl = `https://api.microlink.io?url=${encodeURIComponent(url)}&screenshot=true&meta=false&viewport.width=1024&viewport.height=640&waitForTimeout=1000`;
+    const mlApiUrl = `https://api.microlink.io?url=${encodeURIComponent(url)}&screenshot=true&meta=false&viewport.width=960&viewport.height=600&screenshot.type=jpeg&screenshot.quality=80&viewport.deviceScaleFactor=1&waitForTimeout=1000`;
     const res = await fetch(mlApiUrl, { signal: controller.signal });
     clearTimeout(timeoutId);
 

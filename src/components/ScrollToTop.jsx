@@ -18,7 +18,8 @@ export const ScrollToTop = memo(() => {
     let lastVisible = false;
 
     const checkVisibility = () => {
-      const shouldBeVisible = window.pageYOffset > 400;
+      const scrollY = window.scrollY || window.pageYOffset || 0;
+      const shouldBeVisible = scrollY > 400;
       if (shouldBeVisible !== lastVisible) {
         lastVisible = shouldBeVisible;
         setIsVisible(shouldBeVisible);

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import companyData from '../data/company.json';
 
 const CountUpNumber = ({ target, duration = 2 }) => {
-  const [count, setCount] = useState(0);
+  const spanRef = React.useRef(null);
 
   useEffect(() => {
     let startTimestamp = null;
@@ -15,12 +15,15 @@ const CountUpNumber = ({ target, duration = 2 }) => {
       const progress = Math.min((timestamp - startTimestamp) / (duration * 1000), 1);
       // Smooth cubic ease out
       const easedProgress = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(easedProgress * target));
+      const currentVal = Math.floor(easedProgress * target);
+      if (spanRef.current) {
+        spanRef.current.textContent = currentVal;
+      }
 
       if (progress < 1) {
         animationFrameId = window.requestAnimationFrame(step);
-      } else {
-        setCount(target);
+      } else if (spanRef.current) {
+        spanRef.current.textContent = target;
       }
     };
 
@@ -33,7 +36,7 @@ const CountUpNumber = ({ target, duration = 2 }) => {
     };
   }, [target, duration]);
 
-  return <span>{count}</span>;
+  return <span ref={spanRef}>0</span>;
 };
 
 export const StatsCounter = () => {
